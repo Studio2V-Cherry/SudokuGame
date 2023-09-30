@@ -23,6 +23,6 @@ public partial class MainPage : ContentPage
     private void markErrorToggled(object sender, ToggledEventArgs e)
     {
        // SudukoGeneratorViewmodel.Instance.MarkError = e.Value;
-      //  SudukoGeneratorViewmodel.Instance.markErrors(e.Value);
+        SudukoGeneratorViewmodel.Instance.markErrors(e.Value);
     }
 }

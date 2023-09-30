@@ -104,6 +104,18 @@ namespace SudokuGame.Models
             }
         }
 
+        private Color _selectedColor;
+
+        public Color SelectedColor
+        {
+            get => _selectedColor;
+            set
+            {
+                _selectedColor = value;
+                OnPropertyChanged();
+            }
+        }
+
         /// <summary>
         /// The text color
         /// </summary>
@@ -120,8 +132,11 @@ namespace SudokuGame.Models
             get => _textColor;
             set
             {
-                _textColor = value;
-                OnPropertyChanged();
+                if (!isLocked)
+                {
+                    _textColor = value;
+                    OnPropertyChanged();
+                }
             }
         }
 
@@ -160,11 +175,15 @@ namespace SudokuGame.Models
         /// </summary>
         public void CheckOriginalValue(bool check)
         {
-            if (!string.IsNullOrEmpty(CellVal)&&check)
+            if (!string.IsNullOrEmpty(CellVal) && check)
             {
-                if(!CellVal.Equals(OriginalCellVal))
+                if (!CellVal.Equals(OriginalCellVal))
                 {
-                    TextColor=Colors.Red;
+                    TextColor = Colors.Red;
+                }
+                else
+                {
+                    TextColor = Colors.Black;
                 }
             }
             else

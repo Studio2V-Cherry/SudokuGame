@@ -68,21 +68,28 @@
                                    CornerRadius="0"
                                    Padding="0"
                                    Margin="0"
-                                   BorderColor="LightGray"
+                                   BorderColor="#F7F9F9"
                                    VerticalOptions="FillAndExpand"
                                    HorizontalOptions="FillAndExpand"
                                    Grid.Column="{Binding rrow}"
                                    Grid.Row="{Binding ccol}"
                                    BackgroundColor="{Binding BackgroundColor,Converter={x:StaticResource ColorConverter}}">
-                                <Label HorizontalTextAlignment="Center"
-                                       VerticalTextAlignment="Center"
-                                       FontSize="Medium"
-                                       Text="{Binding CellVal}"
-                                       TextColor="{Binding TextColor,Converter={x:StaticResource ColorConverter},ConverterParameter={x:StaticResource Black}}" />
-                                <Frame.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding Source={x:Reference sudukoGrid},Path=BindingContext.frameSelectedCommand }"
-                                                          CommandParameter="{Binding .}" />
-                                </Frame.GestureRecognizers>
+                                <Frame CornerRadius="0"
+                                       Padding="0"
+                                       Margin="0"
+                                       BorderColor="Transparent"
+                                       HasShadow="False"
+                                       BackgroundColor="{Binding SelectedColor,Converter={x:StaticResource ColorConverter},ConverterParameter={x:StaticResource Transparent}}">
+                                    <Label HorizontalTextAlignment="Center"
+                                           VerticalTextAlignment="Center"
+                                           FontSize="Medium"
+                                           Text="{Binding CellVal}"
+                                           TextColor="{Binding TextColor,Converter={x:StaticResource ColorConverter},ConverterParameter={x:StaticResource Black}}" />
+                                    <Frame.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Source={x:Reference sudukoGrid},Path=BindingContext.frameSelectedCommand }"
+                                                              CommandParameter="{Binding .}" />
+                                    </Frame.GestureRecognizers>
+                                </Frame>
                             </Frame>
                         </DataTemplate>
                     </BindableLayout.ItemTemplate>

@@ -185,7 +185,17 @@ namespace SudokuGame.Viewmodel
         {
             SudukoBoardModel.All(x =>
             {
-                x.BackgroundColor = Colors.Transparent;
+                x.SelectedColor = Colors.Transparent;
+                return true;
+            });
+        }
+
+        private void resetAllNumberCells()
+        {
+            SudukoBoardModel.All(x =>
+            {
+                if(x.isLocked)
+                 x.TextColor = Colors.DarkGray;
                 return true;
             });
         }
@@ -218,12 +228,12 @@ namespace SudokuGame.Viewmodel
                 }
                 return true;
             });
-            SudukoBoardModel.All(x =>
-            {
-                if (x.cellRegion == cellRegion)
-                    x.BackgroundColor = Color.FromArgb("#629BFB");
-                return true;
-            });
+            //SudukoBoardModel.All(x =>
+            //{
+            //    if (x.cellRegion == cellRegion)
+            //        x.BackgroundColor = Color.FromArgb("#629BFB");
+            //    return true;
+            //});
         }
 
         /// <summary>
@@ -234,9 +244,8 @@ namespace SudokuGame.Viewmodel
         {
             try
             {
-                resetAllCells();
+                //resetAllCells();
                 // sudukoBoardModel.BackgroundColor = Colors.Green;
-                highlightRegions(sudukoBoardModel);
                 if (!sudukoBoardModel.isLocked)
                 {
                     sudukoBoardModel.CellVal = selectedNumbers.number;
@@ -245,7 +254,10 @@ namespace SudokuGame.Viewmodel
                     sudukoBoardModel.CheckOriginalValue(MarkError);
                     isSudukoSolved();
                 }
-               // selectedSudukoFrame = sudukoBoardModel;
+                highlightNumberFrames(selectedNumbers);
+                highlightFrames(selectedNumbers);
+                //highlightRegions(sudukoBoardModel);
+                // selectedSudukoFrame = sudukoBoardModel;
             }
             catch (Exception e)
             {
@@ -263,7 +275,24 @@ namespace SudokuGame.Viewmodel
             SudukoBoardModel.All(x =>
             {
                 if (x.CellVal == numbers.number && !string.IsNullOrEmpty(x.CellVal))
-                    x.BackgroundColor = Color.FromArgb("#629BFB");
+                    x.SelectedColor = Color.FromArgb("#E9DDD4");
+                return true;
+            });
+        }
+
+        private void highlightNumberFrames(Numbers numbers)
+        {
+            resetAllNumberCells();
+            SudukoBoardModel.All(x =>
+            {
+                if (x.CellVal == numbers.number && !string.IsNullOrEmpty(x.CellVal) )
+                {
+                    x.TextColor = Colors.Black;
+                }
+                if (!x.isLocked)
+                {
+                    x.CheckOriginalValue(MarkError);
+                }
                 return true;
             });
         }
@@ -288,6 +317,7 @@ namespace SudokuGame.Viewmodel
                 return true;
             });
             selectedNumbers = numbers;
+            highlightNumberFrames(selectedNumbers);
             highlightFrames(numbers);
             // selectedSudukoFrame.CellVal =(string) numbers.number;
             //SudokuBoard[selectedSudukoFrame.Cell] = int.Parse(numbers.number);
@@ -397,18 +427,30 @@ namespace SudokuGame.Viewmodel
                     {
                         //Regions.TryAdd(region, new List<int>(places));                        
                         // Regions[region].Add(places++);
+                        if (region % 2 == 1)
+                        {
+                            SudukoBoardModel[places].BackgroundColor = Color.FromArgb("#F2F1F0");
+                        }
                         SudukoBoardModel[places++].cellRegion = region;
                     }
                     for (int k = 0; k < 3; k++)
                     {
                         //Regions.TryAdd(region+1, new List<int>(places));
                         //Regions[region+1].Add(places++);
+                        if ((region+1) % 2 == 1)
+                        {
+                            SudukoBoardModel[places].BackgroundColor = Color.FromArgb("#F2F1F0");
+                        }
                         SudukoBoardModel[places++].cellRegion = region + 1;
                     }
                     for (int l = 0; l < 3; l++)
                     {
                         //Regions.TryAdd(region+2, new List<int>(places));
                         //Regions[region+2].Add(places++);
+                        if ((region + 2) % 2 == 1)
+                        {
+                            SudukoBoardModel[places].BackgroundColor = Color.FromArgb("#F2F1F0");
+                        }
                         SudukoBoardModel[places++].cellRegion = region + 2;
                     }
                 }
@@ -482,9 +524,9 @@ namespace SudokuGame.Viewmodel
 
                 for (int j = 0; j < 9; j++, places++)
                 {
-                    SudukoBoardModel[places].isLocked = (suduko[places] != 0);
                     SudukoBoardModel[places].rrow = j;
-                    SudukoBoardModel[places].TextColor = Colors.Black;
+                    SudukoBoardModel[places].TextColor = Colors.DarkGray;
+                    SudukoBoardModel[places].isLocked = (suduko[places] != 0);
                     SudukoBoardModel[places].ccol = i;
                     SudukoBoardModel[places].Cell = places;
                     SudukoBoardModel[places].OriginalCellVal = SolvedSudokuBoard[places].ToString();
