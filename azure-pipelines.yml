@@ -9,14 +9,14 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
-
 variables:
   - group: CI-pipeline-Variables
   - name: DotNetVersion
     value: $[variables.DotNetVersion]
+
+steps:
+- script: echo Hello, world!
+  displayName: 'Run a one-line script'
 
 - task: UseDotNet@2
   displayName: .NET Version
