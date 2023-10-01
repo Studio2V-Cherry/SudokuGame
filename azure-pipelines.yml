@@ -45,7 +45,7 @@ steps:
 #       cd 6.0/Apps/WeatherTwentyOne/src
 #       dotnet publish -f net6.0-android -c Release
 
-- powershell: dotnet workload install maui-android maui-ios
+- powershell: dotnet workload install maui-android
   displayName: Install .NET MAUI Workload
   
 # - task: CmdLine@2
