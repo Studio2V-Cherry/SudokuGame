@@ -73,6 +73,7 @@ steps:
 - script: echo file paths
 - script: echo working directory $(system.defaultworkingdirectory)/**
 - script: echo staging directory $(build.artifactstagingdirectory)/**
+- script: echo $(app-path-contents)/$(app-build-configuration)/$(app-target-framework-android)/publish/**
   displayName: 'show paths'
 
 - task: CopyFiles@2
