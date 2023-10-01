@@ -18,6 +18,29 @@
         <Frame Grid.RowSpan="2"
                BackgroundColor="#2A79FA"
                Grid.Row="0" />
+        <Grid Grid.Row="0"
+              VerticalOptions="CenterAndExpand"
+              HorizontalOptions="CenterAndExpand"
+              ColumnDefinitions="Auto,Auto,Auto"
+              RowDefinitions="Auto">
+            <Label Grid.Column="0"
+                   Grid.Row="0"
+                   FontAttributes="Bold"
+                   TextColor="White"
+                   Padding="10"
+                   FontSize="Medium"
+                   Text="Time" />
+            <Label Grid.Column="1"
+                   TextColor="White"
+                   FontSize="Medium"
+                   FontAttributes="Bold"
+                   Padding="10"
+                   Text="{Binding Timing}" />
+            <Button Grid.Column="2"
+                    Text="Undo"
+                    IsEnabled="{Binding IsUndoEnabled}"
+                    Command="{Binding undoSudukoCommand}" />
+        </Grid>
         <Frame Grid.Row="1"
                Grid.RowSpan="5"
                BackgroundColor="Transparent"
@@ -117,9 +140,10 @@
                                 <Frame.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding Source={x:Reference sudukoGrid},Path=BindingContext.numberSelectedCommand }"
                                                           CommandParameter="{Binding .}" />
-                                    <TapGestureRecognizer NumberOfTapsRequired="2"
+                                    <!--double tap-->
+                                    <!--<TapGestureRecognizer NumberOfTapsRequired="2"
                                                           Command="{Binding Source={x:Reference sudukoGrid},Path=BindingContext.numberLongSelectedCommand }"
-                                                          CommandParameter="{Binding .}" />
+                                                          CommandParameter="{Binding .}" />-->
                                 </Frame.GestureRecognizers>
                             </Frame>
                         </DataTemplate>

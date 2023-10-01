@@ -104,8 +104,17 @@ namespace SudokuGame.Models
             }
         }
 
+        /// <summary>
+        /// The selected color
+        /// </summary>
         private Color _selectedColor;
 
+        /// <summary>
+        /// Gets or sets the color of the selected.
+        /// </summary>
+        /// <value>
+        /// The color of the selected.
+        /// </value>
         public Color SelectedColor
         {
             get => _selectedColor;
@@ -173,6 +182,7 @@ namespace SudokuGame.Models
         /// <summary>
         /// Checks the original value.
         /// </summary>
+        /// <param name="check">if set to <c>true</c> [check].</param>
         public void CheckOriginalValue(bool check)
         {
             if (!string.IsNullOrEmpty(CellVal) && check)

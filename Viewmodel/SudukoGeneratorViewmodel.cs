@@ -1,4 +1,5 @@
-﻿using SudokuGame.Models;
+﻿using SudokuGame.Helpers;
+using SudokuGame.Models;
 using SudokuSharp;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -21,7 +22,61 @@ namespace SudokuGame.Viewmodel
         /// </value>
         public Board SudokuBoard { get; set; }
 
+        /// <summary>
+        /// Gets or sets the solved sudoku board.
+        /// </summary>
+        /// <value>
+        /// The solved sudoku board.
+        /// </value>
         private Board SolvedSudokuBoard { get; set; }
+
+        /// <summary>
+        /// Gets or sets the suduko board models stack.
+        /// </summary>
+        /// <value>
+        /// The suduko board models stack.
+        /// </value>
+        private Stack<Tuple<int, string>> SudukoBoardModelsStack { get; set; }
+
+        /// <summary>
+        /// The is undo enabled
+        /// </summary>
+        private bool _isUndoEnabled;
+        /// <summary>
+        /// Gets or sets a value indicating whether this instance is undo enabled.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance is undo enabled; otherwise, <c>false</c>.
+        /// </value>
+        public bool IsUndoEnabled
+        {
+            get => _isUndoEnabled;
+            set
+            {
+                _isUndoEnabled = value;
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
+        /// The timing
+        /// </summary>
+        private string _timing;
+        /// <summary>
+        /// Gets or sets the timing.
+        /// </summary>
+        /// <value>
+        /// The timing.
+        /// </value>
+        public string Timing
+        {
+            get => _timing;
+            set
+            {
+                _timing = value;
+                OnPropertyChanged(nameof(Timing));
+            }
+        }
         /// <summary>
         /// Gets or sets the regions.
         /// </summary>
@@ -44,6 +99,9 @@ namespace SudokuGame.Viewmodel
         /// </summary>
         Random random;
 
+        /// <summary>
+        /// The is number selected
+        /// </summary>
         private bool isNumberSelected;
         /// <summary>
         /// Gets or sets the instance.
@@ -81,8 +139,17 @@ namespace SudokuGame.Viewmodel
             }
         }
 
+        /// <summary>
+        /// The mark error
+        /// </summary>
         private bool _markError;
 
+        /// <summary>
+        /// Gets or sets a value indicating whether [mark error].
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if [mark error]; otherwise, <c>false</c>.
+        /// </value>
         public bool MarkError
         {
             get => _markError;
@@ -90,7 +157,7 @@ namespace SudokuGame.Viewmodel
             {
                 _markError = value;
                 OnPropertyChanged(nameof(MarkError));
-               // markErrors(value);
+                // markErrors(value);
             }
         }
 
@@ -166,6 +233,12 @@ namespace SudokuGame.Viewmodel
         /// </value>
         public ICommand numberSelectedCommand => new Command<Numbers>(numberSelectedModel);
 
+        /// <summary>
+        /// Gets the number long selected command.
+        /// </summary>
+        /// <value>
+        /// The number long selected command.
+        /// </value>
         public ICommand numberLongSelectedCommand => new Command<Numbers>(numberLongSelected);
 
         /// <summary>
@@ -176,8 +249,22 @@ namespace SudokuGame.Viewmodel
         /// </value>
         public ICommand validateSudokuCommand => new Command(validateSudoku);
 
+
+        /// <summary>
+        /// Gets the regenerate sudoku command.
+        /// </summary>
+        /// <value>
+        /// The regenerate sudoku command.
+        /// </value>
         public ICommand regenerateSudokuCommand => new Command(PopulateSuduko);
 
+        /// <summary>
+        /// Gets the undo suduko command.
+        /// </summary>
+        /// <value>
+        /// The undo suduko command.
+        /// </value>
+        public ICommand undoSudukoCommand => new Command(SudukoUndoOperation);
         /// <summary>
         /// Resets all cells.
         /// </summary>
@@ -190,12 +277,15 @@ namespace SudokuGame.Viewmodel
             });
         }
 
+        /// <summary>
+        /// Resets all number cells.
+        /// </summary>
         private void resetAllNumberCells()
         {
             SudukoBoardModel.All(x =>
             {
-                if(x.isLocked)
-                 x.TextColor = Colors.DarkGray;
+                if (x.isLocked)
+                    x.TextColor = Colors.DarkGray;
                 return true;
             });
         }
@@ -222,7 +312,7 @@ namespace SudokuGame.Viewmodel
                     x.BackgroundColor = Color.FromArgb("#C5C5C5");
                     j++;
                 }
-                if (x.CellVal== sudukoBoardModel.CellVal && !string.IsNullOrEmpty(x.CellVal))
+                if (x.CellVal == sudukoBoardModel.CellVal && !string.IsNullOrEmpty(x.CellVal))
                 {
                     x.BackgroundColor = Color.FromArgb("#C5C5C5");
                 }
@@ -250,6 +340,7 @@ namespace SudokuGame.Viewmodel
                 {
                     sudukoBoardModel.CellVal = selectedNumbers.number;
                     SudokuBoard[sudukoBoardModel.Cell] = int.Parse(selectedNumbers.number);
+                    SudukoAddOperation(sudukoBoardModel.Cell, selectedNumbers.number);
                     //validateSudoku();
                     sudukoBoardModel.CheckOriginalValue(MarkError);
                     isSudukoSolved();
@@ -280,12 +371,16 @@ namespace SudokuGame.Viewmodel
             });
         }
 
+        /// <summary>
+        /// Highlights the number frames.
+        /// </summary>
+        /// <param name="numbers">The numbers.</param>
         private void highlightNumberFrames(Numbers numbers)
         {
             resetAllNumberCells();
             SudukoBoardModel.All(x =>
             {
-                if (x.CellVal == numbers.number && !string.IsNullOrEmpty(x.CellVal) )
+                if (x.CellVal == numbers.number && !string.IsNullOrEmpty(x.CellVal))
                 {
                     x.TextColor = Colors.Black;
                 }
@@ -303,37 +398,14 @@ namespace SudokuGame.Viewmodel
         /// <param name="numbers">The numbers.</param>
         private void numberSelectedModel(Numbers numbers)
         {
-            isNumberSelected = false;
-            Numbers.All(x =>
-            {
-                if (x.number == numbers.number)
-                {
-                    x.BackgroundColor = Color.FromArgb("#DCE5F4");
-                }
-                else
-                {
-                    x.BackgroundColor = Colors.White;
-                }
-                return true;
-            });
-            selectedNumbers = numbers;
-            highlightNumberFrames(selectedNumbers);
-            highlightFrames(numbers);
-            // selectedSudukoFrame.CellVal =(string) numbers.number;
-            //SudokuBoard[selectedSudukoFrame.Cell] = int.Parse(numbers.number);
-        }
-
-        private void numberLongSelected(Numbers numbers)
-        {
-            isNumberSelected =!isNumberSelected;
-            if (isNumberSelected)
+            isNumberSelected = !isNumberSelected;
+            if (numbers.number != (selectedNumbers?.number ?? ""))
             {
                 Numbers.All(x =>
                 {
                     if (x.number == numbers.number)
                     {
-                        x.BackgroundColor = Color.FromArgb("#60f78e");
-                        selectedNumbers=numbers;
+                        x.BackgroundColor = Color.FromArgb("#DCE5F4");
                     }
                     else
                     {
@@ -341,6 +413,57 @@ namespace SudokuGame.Viewmodel
                     }
                     return true;
                 });
+                selectedNumbers = numbers;
+                highlightNumberFrames(selectedNumbers);
+                highlightFrames(numbers);
+                isNumberSelected = true;
+            }
+            else
+            {
+                resetNumberSelections();
+            }
+            // selectedSudukoFrame.CellVal =(string) numbers.number;
+            //SudokuBoard[selectedSudukoFrame.Cell] = int.Parse(numbers.number);
+        }
+
+        /// <summary>
+        /// Resets the number selections.
+        /// </summary>
+        private void resetNumberSelections()
+        {
+            Numbers.All(x =>
+            {
+                x.BackgroundColor = Colors.White;
+                return true;
+            });
+            selectedNumbers = null;
+            resetAllNumberCells();
+            resetAllCells();
+        }
+
+        /// <summary>
+        /// Numbers the long selected.
+        /// </summary>
+        /// <param name="numbers">The numbers.</param>
+        private void numberLongSelected(Numbers numbers)
+        {
+            isNumberSelected = !isNumberSelected;
+            if (numbers.number != selectedNumbers.number)
+            {
+                Numbers.All(x =>
+                {
+                    if (x.number == numbers.number)
+                    {
+                        x.BackgroundColor = Color.FromArgb("#60f78e");
+                        selectedNumbers = numbers;
+                    }
+                    else
+                    {
+                        x.BackgroundColor = Colors.White;
+                    }
+                    return true;
+                });
+                isNumberSelected = true;
             }
             else
             {
@@ -364,9 +487,13 @@ namespace SudokuGame.Viewmodel
             //    return;
             //}
 
-            
+
         }
 
+        /// <summary>
+        /// Marks the errors.
+        /// </summary>
+        /// <param name="check">if set to <c>true</c> [check].</param>
         public void markErrors(bool check)
         {
             SudukoBoardModel.All(x =>
@@ -376,11 +503,15 @@ namespace SudokuGame.Viewmodel
             });
         }
 
+        /// <summary>
+        /// Determines whether [is suduko solved].
+        /// </summary>
         private async void isSudukoSolved()
         {
             if (SudokuBoard.IsSolved)
             {
-                await Application.Current.MainPage.DisplayAlert("Sudoku", "Sudoku Solved Successfully", "Ok");
+                TimerHelpers.stopTimer();
+                await Application.Current.MainPage.DisplayAlert("Sudoku", $"Sudoku Solved Successfully in {Timing}", "Ok");
                 IsLoading = true;
                 PopulateSuduko();
                 IsLoading = false;
@@ -388,12 +519,13 @@ namespace SudokuGame.Viewmodel
         }
 
         /// <summary>
-        /// Prevents a default instance of the <see cref="SudukoGeneratorViewmodel"/> class from being created.
+        /// Prevents a default instance of the <see cref="SudukoGeneratorViewmodel" /> class from being created.
         /// </summary>
         private SudukoGeneratorViewmodel()
         {
             random = new Random();
             Regions = new Dictionary<int, List<int>>();
+            SudukoBoardModelsStack = new Stack<Tuple<int, string>>();
         }
 
         /// <summary>
@@ -437,7 +569,7 @@ namespace SudokuGame.Viewmodel
                     {
                         //Regions.TryAdd(region+1, new List<int>(places));
                         //Regions[region+1].Add(places++);
-                        if ((region+1) % 2 == 1)
+                        if ((region + 1) % 2 == 1)
                         {
                             SudukoBoardModel[places].BackgroundColor = Color.FromArgb("#F2F1F0");
                         }
@@ -476,6 +608,51 @@ namespace SudokuGame.Viewmodel
             SolvedSudokuBoard = SudokuSharp.Factory.Solution(random.Next(6, 25));
             SudokuBoard = SudokuSharp.Factory.Puzzle(SolvedSudokuBoard, random, QuadsToCut: random.Next(1, 8), random.Next(1, 8), random.Next(1, 8));
             ReturnPopulatedGrid(SudokuBoard);
+        }
+
+        /// <summary>
+        /// Sudukoes the add operation.
+        /// </summary>
+        /// <param name="cell">The cell.</param>
+        /// <param name="value">The value.</param>
+        private void SudukoAddOperation(int cell, string value)
+        {
+            SudukoBoardModelsStack.Push(new Tuple<int, string>(cell, value));
+            IsUndoEnabled = SudukoBoardModelsStack?.Any() ?? false;
+        }
+
+        /// <summary>
+        /// Sudukoes the undo operation.
+        /// </summary>
+        private void SudukoUndoOperation()
+        {
+            if (SudukoBoardModelsStack.Count > 0)
+            {
+                var isPopped = SudukoBoardModelsStack.TryPop(out Tuple<int, string> sudukoPop);
+                if (isPopped)
+                {
+                    var Poppedcell = sudukoPop.Item1;
+                    var Poppedvalue = sudukoPop.Item2;
+
+                    SudukoBoardModel[Poppedcell].CellVal = string.Empty;
+                    var parellelStack = new Stack<Tuple<int, string>>();
+                    while (SudukoBoardModelsStack.TryPop(out Tuple<int, string> sudukoPopped))
+                    {
+                        parellelStack.Push(sudukoPopped);
+                        if (sudukoPopped.Item1 == Poppedcell)
+                        {
+                            SudukoBoardModel[Poppedcell].CellVal = sudukoPopped.Item2;
+                            break;
+                        }
+                    }
+                    while (parellelStack.TryPop(out Tuple<int, string> sudukoPopped))
+                    {
+                        SudukoBoardModelsStack.Push(sudukoPopped);
+                    }
+                    resetNumberSelections();
+                }
+            }
+            IsUndoEnabled = SudukoBoardModelsStack?.Any() ?? false;
         }
 
         /// <summary>
@@ -525,7 +702,7 @@ namespace SudokuGame.Viewmodel
                 for (int j = 0; j < 9; j++, places++)
                 {
                     SudukoBoardModel[places].rrow = j;
-                    SudukoBoardModel[places].TextColor = Colors.DarkGray;
+                    SudukoBoardModel[places].TextColor = Colors.DimGray;
                     SudukoBoardModel[places].isLocked = (suduko[places] != 0);
                     SudukoBoardModel[places].ccol = i;
                     SudukoBoardModel[places].Cell = places;
@@ -548,6 +725,23 @@ namespace SudokuGame.Viewmodel
             //BindableLayout.SetItemsSource(sudukogrid, SudukoBoardModel);
 
             //return sudukogrid;
+
+            //Start _stopwatch
+            resetNumberSelections();
+            TimerHelpers.startTimer();
+            SudukoBoardModelsStack = new Stack<Tuple<int, string>>();
+            SudukoUndoOperation();
+            TimerHelpers.UpdateTimer += TimerHelpers_UpdateTimer;
+        }
+
+        /// <summary>
+        /// Handles the UpdateTimer event of the TimerHelpers control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="TimerHelperEventArgs"/> instance containing the event data.</param>
+        private void TimerHelpers_UpdateTimer(object sender, TimerHelperEventArgs e)
+        {
+            Timing = e.Timer;
         }
 
         /// <summary>
