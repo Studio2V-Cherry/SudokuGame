@@ -69,3 +69,12 @@ steps:
     apksignerKeystoreAlias: 'sudokucherry'
     apksignerKeyPassword: 'sudokucherry123'
     zipalign: false
+
+
+# Publish artifacts
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifacts'
+  inputs:
+    PathtoPublish: '$(build.artifactstagingdirectory)'
+    ArtifactName: 'drop_maui_android'
+    publishLocation: 'Container'  
