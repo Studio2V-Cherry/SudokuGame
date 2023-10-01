@@ -70,6 +70,13 @@ steps:
     apksignerKeyPassword: 'sudokucherry123'
     zipalign: false
 
+- task: CopyFiles@2
+  displayName: 'Copy files to $(build.artifactstagingdirectory)'
+  inputs:
+    SourceFolder: '$(system.defaultworkingdirectory)'
+    Contents: '$(app-path-contents)/$(app-build-configuration)/$(app-target-framework-android)/publish/**'
+    TargetFolder: '$(build.artifactstagingdirectory)'
+    CleanTargetFolder: true
 
 # Publish artifacts
 - task: PublishBuildArtifacts@1
