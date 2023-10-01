@@ -31,11 +31,11 @@ steps:
 #     jdkArchitectureOption: 'x64'
 #     jdkSourceOption: 'PreInstalled'
 
-- task: CmdLine@2
-  displayName: Install MAUI
-  inputs:
-    script: |
-      Dotnet workload install maui-android maui-ios
+# - task: CmdLine@2
+#   displayName: Install MAUI
+#   inputs:
+#     script: |
+#       Dotnet workload install maui-android maui-ios
 
 # - task: Bash@3
 #   displayName: Build Android App
@@ -44,3 +44,12 @@ steps:
 #     script: |
 #       cd 6.0/Apps/WeatherTwentyOne/src
 #       dotnet publish -f net6.0-android -c Release
+
+- powershell: dotnet workload install maui-android maui-ios
+  displayName: Install .NET MAUI Workload
+  
+# - task: CmdLine@2
+#   displayName: 'Build project'
+#   inputs:
+#     script: |
+#       dotnet publish $(app-path-project) -f $(app-target-framework-android) -c Release /p:ApplicationId=$(app-id-android) /p:ApplicationDisplayVersion=$(MAJOR).$(MINOR).$(PATCH).$(PRE_RELEASE) /p:ApplicationVersion=$(MAJOR)$(MINOR)$(PATCH)$(PRE_RELEASE) /p:AndroidSigningKeyPass=$(key-password) /p:AndroidSigningStorePass=$(keystore-password) /p:AndroidSigningKeyStore=$(System.DefaultWorkingDirectory)\\$(keystore-filename) /p:AndroidSigningKeyAlias=$(keystore-alias) /p:AndroidKeyStore=true
