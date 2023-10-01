@@ -31,19 +31,16 @@ steps:
 #     jdkArchitectureOption: 'x64'
 #     jdkSourceOption: 'PreInstalled'
 
-- task: Bash@3
+- task: CmdLine@2
   displayName: Install MAUI
   inputs:
-    targetType: 'inline'
     script: |
-      dotnet nuget locals all --clear 
-      dotnet workload install maui --source https://aka.ms/dotnet6/nuget/index.json --source https://api.nuget.org/v3/index.json
-      dotnet workload install android maui wasm-tools --source https://aka.ms/dotnet6/nuget/index.json --source https://api.nuget.org/v3/index.json
+      Dotnet workload install maui-android maui-ios
 
-- task: Bash@3
-  displayName: Build Android App
-  inputs:
-    targetType: 'inline'
-    script: |
-      cd 6.0/Apps/WeatherTwentyOne/src
-      dotnet publish -f net6.0-android -c Release
+# - task: Bash@3
+#   displayName: Build Android App
+#   inputs:
+#     targetType: 'inline'
+#     script: |
+#       cd 6.0/Apps/WeatherTwentyOne/src
+#       dotnet publish -f net6.0-android -c Release
