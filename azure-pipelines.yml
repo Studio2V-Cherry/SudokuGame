@@ -11,8 +11,6 @@ pool:
 
 variables:
   - group: CI-pipeline-Variables
-  - name: DotNetVersion
-    value: $[variables.DotNetVersion]
 
 steps:
 - script: echo Hello, world!
