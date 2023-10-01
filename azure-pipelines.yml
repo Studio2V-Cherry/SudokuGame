@@ -71,9 +71,9 @@ steps:
     zipalign: false
 
 - script: echo file paths
-- script: echo working directory $(system.defaultworkingdirectory)/**/bin
+- script: echo working directory $(system.defaultworkingdirectory)/bin/**
 - script: echo staging directory $(build.artifactstagingdirectory)/**
-- script: echo $(app-path-contents)/$(app-build-configuration)/$(app-target-framework-android)/publish/**/bin
+- script: echo $(app-path-contents)/$(app-build-configuration)/$(app-target-framework-android)/publish/bin/**
   displayName: 'show paths'
 
 - task: CopyFiles@2
