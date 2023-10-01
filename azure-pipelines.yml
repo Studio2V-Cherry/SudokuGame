@@ -70,6 +70,11 @@ steps:
     apksignerKeyPassword: 'sudokucherry123'
     zipalign: false
 
+- script: echo file paths
+- script: echo working directory $(system.defaultworkingdirectory)/**
+- script: echo staging directory $(system.artifactstagingdirectory)/**
+  displayName: 'show paths'
+
 - task: CopyFiles@2
   displayName: 'Copy files to $(build.artifactstagingdirectory)'
   inputs:
