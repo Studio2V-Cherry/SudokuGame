@@ -16,9 +16,7 @@ public partial class SudokuGame : ContentPage
         try
         {
             InitializeComponent();
-            this.BindingContext = SudukoGeneratorViewmodel.Instance;
-            //SudukoGeneratorViewmodel.Instance.populateGrids();
-            SudukoGeneratorViewmodel.Instance.populateGrids();
+            this.BindingContext = SudukoGeneratorViewmodel.Instance;            
             configurePageGrid();
         }
         catch (Exception e)
@@ -42,7 +40,7 @@ public partial class SudokuGame : ContentPage
     protected override void OnAppearing()
     {
         base.OnAppearing();
-        SudukoGeneratorViewmodel.Instance.FirstTimeSuduko();
+        //SudukoGeneratorViewmodel.Instance.FirstTimeSuduko();
 
         //errorSwitch.Toggled += markErrorToggled;
         ///BindableLayout.SetItemsSource(sudukoGrid, SudukoGeneratorViewmodel.Instance.SudukoBoardModel);

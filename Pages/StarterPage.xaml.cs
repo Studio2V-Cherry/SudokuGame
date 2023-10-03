@@ -16,6 +16,13 @@ public partial class StarterPage : ContentPage
     {
         InitializeComponent();
         this.BindingContext = BaseViewmodel.Instance;
+        SudukoGeneratorViewmodel.Instance.populateGrids();
+    }
+
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+        SudukoGeneratorViewmodel.Instance.FirstTimeSuduko();
     }
 
     /// <summary>
