@@ -1,4 +1,6 @@
-﻿namespace SudokuGame;
+﻿using SudokuGame.Pages;
+
+namespace SudokuGame;
 
 /// <summary>
 /// main app class
@@ -15,6 +17,9 @@ public partial class App : Application
     public App()
     {
         InitializeComponent();
-        MainPage = new MainPage();
+        Application.Current.UserAppTheme = AppTheme.Light;
+        var navBar= new NavigationPage(new StarterPage());
+        navBar.BarBackgroundColor = Colors.Transparent;
+        MainPage = navBar;
     }
 }
