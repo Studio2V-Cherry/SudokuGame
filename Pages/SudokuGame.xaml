@@ -118,10 +118,10 @@
                       BindableLayout.ItemTemplate="{x:StaticResource sudukoGriddataTemplate}" />
 
 
-                <Grid 
-                      BindableLayout.ItemTemplate="{x:StaticResource numbersDataTemplate}"
+                <Grid BindableLayout.ItemTemplate="{x:StaticResource numbersDataTemplate}"
                       ColumnDefinitions="*,*,*,*,*,*,*,*,*"
-                      ColumnSpacing="4" />
+                      ColumnSpacing="4"
+                      BindableLayout.ItemsSource="{Binding Numbers}" />
 
                 <HorizontalStackLayout BackgroundColor="LightGrey"
                                        HorizontalOptions="CenterAndExpand"
