@@ -9,7 +9,7 @@ using System.Text.Json;
 namespace SudokuGame.CoreLogics
 {
     /// <summary>
-    /// 
+    /// puzzle generator for resume and create
     /// </summary>
     /// <seealso cref="SudokuGame.Viewmodel.BaseViewmodel" />
     public class PuzzleGenerator : BaseViewmodel
@@ -112,20 +112,7 @@ namespace SudokuGame.CoreLogics
                 }
 
                 var FastSudukoBoardModelInstance = JsonSerializer.Deserialize<List<SudukoBoardModel>>(storageHelper.FirstOrDefault().CurrentBoardInstance);
-                for (int i = 0; i < 81; i++)
-                {
-                    FastSudukoBoardModelInstance[i].BackgroundColor = FastSudukoBoardModel[i].BackgroundColor;
-                    if (SudokuBoardList[i] != 0 && $"{SudokuBoardList[i]}".Equals(FastSudukoBoardModelInstance[i].CellVal))
-                    {
-                        FastSudukoBoardModelInstance[i].isLocked = false;
-                        FastSudukoBoardModelInstance[i].TextColor = Colors.DimGray;
-                        FastSudukoBoardModelInstance[i].isLocked = true;
-                    }
-                    else
-                    {
-
-                    }
-                }
+                
                 TimerHelpers.setTimer(storageHelper.FirstOrDefault().elapsed);
 
                 return new Tuple<Board, Board, List<SudukoBoardModel>>(SolvedSudokuBoard, SudokuBoard, FastSudukoBoardModelInstance);
@@ -141,7 +128,6 @@ namespace SudokuGame.CoreLogics
                     for (int j = 0; j < 9; j++, places++)
                     {
                         FastSudukoBoardModel[places].rrow = j;
-                        FastSudukoBoardModel[places].TextColor = Colors.DimGray;
                         FastSudukoBoardModel[places].isLocked = (SudokuBoard[places] != 0);
                         FastSudukoBoardModel[places].ccol = i;
                         FastSudukoBoardModel[places].Cell = places;
