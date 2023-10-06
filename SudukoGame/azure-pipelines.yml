@@ -1,0 +1,94 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- master
+- dev
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  - group: CI-pipeline-Variables
+
+steps:
+- script: echo Hello, world!
+- script: echo $(DotNetVersion)
+  displayName: 'command line statements'
+
+- task: DownloadSecureFile@1
+  inputs:
+    secureFile: 'sudokucherry.keystore'
+    retryCount: '2'
+
+- task: UseDotNet@2
+  displayName: .NET Version
+  inputs:
+    packageType: 'sdk'
+    version: '$(DotNetVersion)'
+    includePreviewVersions: false
+
+# - task: JavaToolInstaller@3
+#   displayName: Install Java SDK
+#   inputs:
+#     versionSpec: '1'
+#     jdkArchitectureOption: 'x64'
+#     jdkSourceOption: 'PreInstalled'
+
+# - task: CmdLine@2
+#   displayName: Install MAUI
+#   inputs:
+#     script: |
+#       Dotnet workload install maui-android maui-ios
+
+# - task: Bash@3
+#   displayName: Build Android App
+#   inputs:
+#     targetType: 'inline'
+#     script: |
+#       cd 6.0/Apps/WeatherTwentyOne/src
+#       dotnet publish -f net6.0-android -c Release
+
+- powershell: dotnet workload install maui-android
+  displayName: Install .NET MAUI Workload
+  
+  
+
+- task: CmdLine@2
+  displayName: 'Build project'
+  inputs:
+    script: 'dotnet publish $(app-path-project) -f $(app-target-framework-android) -c Release /p:ApplicationId=$(app-id-android) /p:ApplicationDisplayVersion=$(MAJOR).$(MINOR).$(PATCH).$(PRE_RELEASE) /p:ApplicationVersion=$(MAJOR)$(MINOR)$(PATCH)$(PRE_RELEASE)'
+
+
+- task: AndroidSigning@3
+  inputs:
+    apkFiles: '**/*.apk'
+    apksignerKeystoreFile: 'sudokucherry.keystore'
+    apksignerKeystorePassword: 'sudokucherry123'
+    apksignerKeystoreAlias: 'sudokucherry'
+    apksignerKeyPassword: 'sudokucherry123'
+    zipalign: false
+
+# - script: echo file paths
+# - script: echo working directory $(system.defaultworkingdirectory)/bin/**
+# - script: echo staging directory $(build.artifactstagingdirectory)/**
+# - script: echo $(app-path-contents)/$(app-build-configuration)/$(app-target-framework-android)/publish/bin/**
+#   displayName: 'show paths'
+
+- task: CopyFiles@2
+  displayName: 'Copy files to $(build.artifactstagingdirectory)'
+  inputs:
+    SourceFolder: '$(system.defaultworkingdirectory)'
+    Contents: '**/bin/**'
+    TargetFolder: '$(build.artifactstagingdirectory)'
+    CleanTargetFolder: true
+
+# Publish artifacts
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifacts'
+  inputs:
+    PathtoPublish: '$(build.artifactstagingdirectory)'
+    ArtifactName: 'drop_maui_android'
+    publishLocation: 'Container'  
