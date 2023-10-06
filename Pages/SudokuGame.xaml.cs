@@ -1,4 +1,5 @@
-﻿using SudokuGame.Viewmodel;
+﻿using Core.TimerHelpers;
+using SudokuGame.Viewmodel;
 
 namespace SudokuGame;
 
@@ -9,41 +10,38 @@ namespace SudokuGame;
 public partial class SudokuGame : ContentPage
 {
     /// <summary>
+    /// The suduko generator viewmodel
+    /// </summary>
+    SudukoGeneratorViewmodel _sudukoGeneratorViewmodel = SudukoGeneratorViewmodel.instance;
+    /// <summary>
     /// Initializes a new instance of the <see cref="MainPage" /> class.
     /// </summary>
-    public SudokuGame()
+    /// <param name="isResume">if set to <c>true</c> [is resume].</param>
+    public SudokuGame(bool isResume = false)
     {
-        try
-        {
-            InitializeComponent();
-            this.BindingContext = SudukoGeneratorViewmodel.Instance;            
-            configurePageGrid();
-        }
-        catch (Exception e)
-        {
-            _ = e;
-        }
+        BaseViewmodel.Instance.IsSudokuHistorySelected = isResume;
+        _sudukoGeneratorViewmodel.IsInGeneration = true;
 
-    }
-
-    /// <summary>
-    /// Configures the page grid.
-    /// </summary>
-    private void configurePageGrid()
-    {
-       // BindableLayout.SetItemsSource(sudukoGrid, SudukoGeneratorViewmodel.Instance.SudukoBoardModel);
+        InitializeComponent();
+        this.BindingContext = _sudukoGeneratorViewmodel;
     }
 
     /// <summary>
     /// Called when [appearing].
     /// </summary>
-    protected override void OnAppearing()
+    protected override async void OnAppearing()
     {
         base.OnAppearing();
-        //SudukoGeneratorViewmodel.Instance.FirstTimeSuduko();
-
-        //errorSwitch.Toggled += markErrorToggled;
-        ///BindableLayout.SetItemsSource(sudukoGrid, SudukoGeneratorViewmodel.Instance.SudukoBoardModel);
+        await _sudukoGeneratorViewmodel.FirstTimeSuduko();
+        if (BaseViewmodel.Instance.IsSudokuHistorySelected)
+        {
+            TimerHelpers.resumeTimer();
+        }
+        else
+        {
+            TimerHelpers.startTimer();
+        }
+        BaseViewmodel.Instance.IsSudokuHistorySelected = false;
     }
 
     /// <summary>
@@ -53,15 +51,17 @@ public partial class SudokuGame : ContentPage
     /// <param name="e">The <see cref="ToggledEventArgs" /> instance containing the event data.</param>
     private void markErrorToggled(object sender, ToggledEventArgs e)
     {
-        SudukoGeneratorViewmodel.Instance.markErrors(e.Value);
+        _sudukoGeneratorViewmodel.markErrors(e.Value);
     }
 
     /// <summary>
     /// Called when [disappearing].
     /// </summary>
-    protected override void OnDisappearing()
+    protected override async void OnDisappearing()
     {
         base.OnDisappearing();
-       // sudukoGrid?.Clear();
+        await _sudukoGeneratorViewmodel.savesuduko();
+        parentGrid
+            .Children.Clear();
     }
 }

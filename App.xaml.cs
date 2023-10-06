@@ -1,4 +1,5 @@
 ﻿using SudokuGame.Pages;
+using SudokuGame.Viewmodel;
 
 namespace SudokuGame;
 
@@ -9,7 +10,7 @@ namespace SudokuGame;
 public partial class App : Application
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="App"/> class.
+    /// Initializes a new instance of the <see cref="App" /> class.
     /// </summary>
     /// <remarks>
     /// To be added.
@@ -17,9 +18,10 @@ public partial class App : Application
     public App()
     {
         InitializeComponent();
-        Application.Current.UserAppTheme = AppTheme.Light;
-        var navBar= new NavigationPage(new StarterPage());
+        Current.UserAppTheme = AppTheme.Light;
+        var navBar = new NavigationPage(new StarterPage());
         navBar.BarBackgroundColor = Colors.Transparent;
         MainPage = navBar;
+        BaseViewmodel.Instance.setNavigation(navBar.Navigation);
     }
 }

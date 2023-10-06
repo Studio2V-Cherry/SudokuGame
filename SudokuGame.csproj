@@ -21,14 +21,23 @@
 
 		<!-- Versions -->
 		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
-		<ApplicationVersion>1</ApplicationVersion>
-
+		<ApplicationVersion>1</ApplicationVersion>		
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">14.2</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">14.0</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
 		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net6.0-android|AnyCPU'">
+	  <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
+	  <AndroidEnableMultiDex>True</AndroidEnableMultiDex>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net6.0-android|AnyCPU'">
+	  <AndroidEnableMultiDex>True</AndroidEnableMultiDex>
+	  <AndroidLinkTool>r8</AndroidLinkTool>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -58,7 +67,19 @@
 
 	<ItemGroup>
 	  <PackageReference Include="akgul.Maui.DataGrid" Version="3.0.0" />
+	  <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+	  <PackageReference Include="PCLStorage" Version="1.0.2" />
+	  <PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
+	  <PackageReference Include="SQLiteNetExtensions.Async" Version="2.1.0" />
+	  <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.6" />
+	  <PackageReference Include="SQLitePCLRaw.core" Version="2.1.6" />
+	  <PackageReference Include="SQLitePCLRaw.provider.dynamic_cdecl" Version="2.1.6" />
+	  <PackageReference Include="SQLitePCLRaw.provider.sqlite3" Version="2.1.6" />
 	  <PackageReference Include="SudokuSharp" Version="2.0.5850.28298" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Core\Core.csproj" />
 	</ItemGroup>
 
 </Project>

@@ -64,7 +64,7 @@
         </DataTemplate>
     </ContentPage.Resources>
 
-    <Grid BackgroundColor="#F4F7FE">
+    <Grid x:Name="parentGrid" BackgroundColor="#F4F7FE">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />

@@ -1,9 +1,9 @@
-﻿using SudokuGame.Helpers;
+﻿using Core.Models;
+using Core.TimerHelpers;
+using SudokuGame.CoreLogics;
 using SudokuGame.Models;
 using SudokuSharp;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Windows.Input;
 
 namespace SudokuGame.Viewmodel
@@ -13,8 +13,26 @@ namespace SudokuGame.Viewmodel
     /// </summary>
     /// <seealso cref="SudokuGame.Viewmodel.BaseViewmodel" />
     /// <seealso cref="System.ComponentModel.INotifyPropertyChanged" />
-    public class SudukoGeneratorViewmodel : BaseViewmodel, INotifyPropertyChanged
+    public class SudukoGeneratorViewmodel : BaseViewmodel
     {
+        /// <summary>
+        /// The instance
+        /// </summary>
+        private static SudukoGeneratorViewmodel _instance;
+        /// <summary>
+        /// Gets the instance.
+        /// </summary>
+        /// <value>
+        /// The instance.
+        /// </value>
+        public static SudukoGeneratorViewmodel instance
+        {
+            get
+            {
+                return _instance = _instance ?? new SudukoGeneratorViewmodel();
+            }
+        }
+
         /// <summary>
         /// Gets or sets the sudoku board.
         /// </summary>
@@ -22,6 +40,14 @@ namespace SudokuGame.Viewmodel
         /// The sudoku board.
         /// </value>
         public Board SudokuBoard { get; set; }
+
+        /// <summary>
+        /// Gets or sets the suduko board generated.
+        /// </summary>
+        /// <value>
+        /// The suduko board generated.
+        /// </value>
+        public Board SudukoBoardGenerated { get; set; }
 
         /// <summary>
         /// Gets or sets the solved sudoku board.
@@ -49,10 +75,16 @@ namespace SudokuGame.Viewmodel
         /// </summary>
         private bool _isInGeneration;
 
+        /// <summary>
+        /// Gets or sets a value indicating whether this instance is in generation.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance is in generation; otherwise, <c>false</c>.
+        /// </value>
         public bool IsInGeneration
         {
-            get=>_isInGeneration; 
-            private set
+            get => _isInGeneration;
+            set
             {
                 _isInGeneration = value;
                 OnPropertyChanged(nameof(IsInGeneration));
@@ -97,38 +129,9 @@ namespace SudokuGame.Viewmodel
         }
 
         /// <summary>
-        /// The instance
-        /// </summary>
-        private static SudukoGeneratorViewmodel _instance;
-
-        /// <summary>
-        /// Occurs when a property value changes.
-        /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
-        /// <summary>
-        /// The random
-        /// </summary>
-        Random random;
-
-        /// <summary>
         /// The is number selected
         /// </summary>
         private bool isNumberSelected;
-
-        /// <summary>
-        /// Gets or sets the instance.
-        /// </summary>
-        /// <value>
-        /// The instance.
-        /// </value>
-        public static SudukoGeneratorViewmodel Instance
-        {
-            set { _instance = value; }
-            get
-            {
-                return _instance = _instance ?? new SudukoGeneratorViewmodel();
-            }
-        }
 
         /// <summary>
         /// The is loading
@@ -192,8 +195,17 @@ namespace SudokuGame.Viewmodel
             }
         }
 
+        /// <summary>
+        /// The fastsuduko board model
+        /// </summary>
         private List<SudukoBoardModel> _fastsudukoBoardModel;
 
+        /// <summary>
+        /// Gets or sets the fast suduko board model.
+        /// </summary>
+        /// <value>
+        /// The fast suduko board model.
+        /// </value>
         public List<SudukoBoardModel> FastSudukoBoardModel
         {
             get => _fastsudukoBoardModel;
@@ -208,6 +220,13 @@ namespace SudokuGame.Viewmodel
         /// The numbers
         /// </summary>
         private ObservableCollection<Numbers> _numbers;
+        /// <summary>
+        /// Gets the puzzle generator.
+        /// </summary>
+        /// <value>
+        /// The puzzle generator.
+        /// </value>
+        private PuzzleGenerator _puzzleGenerator => PuzzleGenerator.Instance;
 
         /// <summary>
         /// Gets or sets the numbers.
@@ -278,7 +297,7 @@ namespace SudokuGame.Viewmodel
         /// <value>
         /// The regenerate sudoku command.
         /// </value>
-        public ICommand regenerateSudokuCommand => new Command(PopulateSuduko);
+        public ICommand regenerateSudokuCommand => new Command(async () => await PopulateSuduko());
 
         /// <summary>
         /// Gets the undo suduko command.
@@ -287,6 +306,22 @@ namespace SudokuGame.Viewmodel
         /// The undo suduko command.
         /// </value>
         public ICommand undoSudukoCommand => new Command(SudukoUndoOperation);
+
+        /// <summary>
+        /// Gets the push suduko game.
+        /// </summary>
+        /// <value>
+        /// The push suduko game.
+        /// </value>
+        public ICommand pushSudukoGame => new Command(() => PushPage(new SudokuGame()));
+
+        /// <summary>
+        /// Gets the resume suduko game.
+        /// </summary>
+        /// <value>
+        /// The resume suduko game.
+        /// </value>
+        public ICommand ResumeSudukoGame => new Command(() => PushPage(new SudokuGame()));
         /// <summary>
         /// Resets all cells.
         /// </summary>
@@ -340,12 +375,6 @@ namespace SudokuGame.Viewmodel
                 }
                 return true;
             });
-            //SudukoBoardModel.All(x =>
-            //{
-            //    if (x.cellRegion == cellRegion)
-            //        x.BackgroundColor = Color.FromArgb("#629BFB");
-            //    return true;
-            //});
         }
 
         /// <summary>
@@ -356,21 +385,17 @@ namespace SudokuGame.Viewmodel
         {
             try
             {
-                //resetAllCells();
-                // sudukoBoardModel.BackgroundColor = Colors.Green;
                 if (!sudukoBoardModel.isLocked)
                 {
                     sudukoBoardModel.CellVal = selectedNumbers.number;
                     SudokuBoard[sudukoBoardModel.Cell] = int.Parse(selectedNumbers.number);
                     SudukoAddOperation(sudukoBoardModel.Cell, selectedNumbers.number);
-                    //validateSudoku();
+                    
                     sudukoBoardModel.CheckOriginalValue(MarkError);
                     isSudukoSolved();
                 }
                 highlightNumberFrames(selectedNumbers);
                 highlightFrames(selectedNumbers);
-                //highlightRegions(sudukoBoardModel);
-                // selectedSudukoFrame = sudukoBoardModel;
             }
             catch (Exception e)
             {
@@ -527,7 +552,7 @@ namespace SudokuGame.Viewmodel
                 TimerHelpers.stopTimer();
                 await Application.Current.MainPage.DisplayAlert("Sudoku", $"Sudoku Solved Successfully in {Timing}", "Ok");
                 IsLoading = true;
-                PopulateSuduko();
+                await PopulateSuduko();
                 IsLoading = false;
             }
         }
@@ -535,9 +560,8 @@ namespace SudokuGame.Viewmodel
         /// <summary>
         /// Prevents a default instance of the <see cref="SudukoGeneratorViewmodel" /> class from being created.
         /// </summary>
-        private SudukoGeneratorViewmodel()
+        public SudukoGeneratorViewmodel()
         {
-            random = new Random();
             SudukoBoardModelsStack = new Stack<Tuple<int, string>>();
             FastSudukoBoardModel = new List<SudukoBoardModel>();
         }
@@ -598,6 +622,17 @@ namespace SudokuGame.Viewmodel
             }
         }
 
+        /// <summary>
+        /// Configures the page.
+        /// </summary>
+        public void configurePage()
+        {
+            populateGrids();
+        }
+
+        /// <summary>
+        /// Populates the grids.
+        /// </summary>
         public void populateGrids()
         {
             ResetPopulateNumbers();
@@ -607,35 +642,45 @@ namespace SudokuGame.Viewmodel
         /// <summary>
         /// Firsts the time suduko.
         /// </summary>
-        public void FirstTimeSuduko()
+        public async Task FirstTimeSuduko()
         {
-            //async Task runPopulateGrid() 
-            //{
-            //    await Task.Run(PopulateSuduko);
-            //    await Task.Run(PopulateRegions);
-            //}
-            //Device.BeginInvokeOnMainThread(async() =>
-            //{
-            //    await runPopulateGrid();
-            //});
-            IsInGeneration =true;
-            PopulateSuduko();
+            IsInGeneration = true;
+            await PopulateSuduko();
             PopulateRegions();
         }
 
         /// <summary>
         /// Populates the suduko.
         /// </summary>
-        public void PopulateSuduko()
+        public async Task PopulateSuduko()
         {
             if (IsInGeneration)
             {
                 IsInGeneration = false;
-                SolvedSudokuBoard = Factory.Solution(random.Next(6, 25));
-                SudokuBoard = Factory.Puzzle(SolvedSudokuBoard, random, QuadsToCut: random.Next(1, 8), random.Next(1, 8), random.Next(1, 8));
-                ReturnPopulatedGrid(SudokuBoard);
+
+                var puzzle = await _puzzleGenerator.GeneratePuzzleAsync(FastSudukoBoardModel);
+                
+
+                SolvedSudokuBoard = puzzle.Item1;
+                SudokuBoard = new Board(puzzle.Item2);
+                SudukoBoardGenerated = new Board(puzzle.Item2);
+                FastSudukoBoardModel = puzzle.Item3;
+                SudukoBoardModelsStack = new Stack<Tuple<int, string>>();
+                SudukoUndoOperation();
+                TimerHelpers.UpdateTimer += TimerHelpers_UpdateTimer;
+                SudukoBoardModel = new ObservableCollection<SudukoBoardModel>(FastSudukoBoardModel);
+
+                resetNumberSelections();
                 IsInGeneration = true;
             }
+        }
+
+        /// <summary>
+        /// Savesudukoes this instance.
+        /// </summary>
+        public async Task savesuduko()
+        {
+            await _puzzleGenerator.savePuzzle(SolvedSudokuBoard, SudukoBoardGenerated, SudukoBoardModel);
         }
 
         /// <summary>
@@ -684,59 +729,18 @@ namespace SudokuGame.Viewmodel
         }
 
         /// <summary>
-        /// Called when [property changed].
-        /// </summary>
-        /// <param name="propertyName">Name of the property.</param>
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        /// <summary>
         /// Populates the grid.
         /// </summary>
         private void PopulateGrid()
         {
-           // if (FastSudukoBoardModel == null)
             {
                 SudukoBoardModel = new ObservableCollection<SudukoBoardModel>();
                 FastSudukoBoardModel = new List<SudukoBoardModel>();
                 for (int i = 0; i < 81; i++)
                 {
-                    FastSudukoBoardModel.Add(new Models.SudukoBoardModel());
+                    FastSudukoBoardModel.Add(new SudukoBoardModel());
                 }
             }
-        }
-
-        /// <summary>
-        /// Returns the populated grid.
-        /// </summary>
-        /// <param name="suduko">The suduko.</param>
-        private void ReturnPopulatedGrid(Board suduko)
-        {
-            int places = 0;
-            for (int i = 0; i < 9; i++)
-            {
-                for (int j = 0; j < 9; j++, places++)
-                {
-                    FastSudukoBoardModel[places].rrow = j;
-                    FastSudukoBoardModel[places].TextColor = Colors.DimGray;
-                    FastSudukoBoardModel[places].isLocked = (suduko[places] != 0);
-                    FastSudukoBoardModel[places].ccol = i;
-                    FastSudukoBoardModel[places].Cell = places;
-                    FastSudukoBoardModel[places].OriginalCellVal = SolvedSudokuBoard[places].ToString();
-                    FastSudukoBoardModel[places].CellVal = (suduko[places] == 0) ? "" : suduko[places].ToString();
-                }
-            }
-
-            //Start _stopwatch
-            //OnPropertyChanged(nameof(SudukoBoardModel));
-            resetNumberSelections();
-            TimerHelpers.startTimer();
-            SudukoBoardModelsStack = new Stack<Tuple<int, string>>();
-            SudukoUndoOperation();
-            TimerHelpers.UpdateTimer += TimerHelpers_UpdateTimer;
-            SudukoBoardModel = new ObservableCollection<SudukoBoardModel>(FastSudukoBoardModel);
         }
 
         /// <summary>
