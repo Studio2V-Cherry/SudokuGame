@@ -34,7 +34,7 @@ steps:
     targetType: 'inline'
     script: |
       Write-Host 'current version $(Tmajor).$(Tminor).$(Tpatch).$(Tprerelease)'
-      $(Tminor)=($(Tminor) -as [int])+1
+      $Tminor=($(Tminor) -as [int])+1
       Write-Host '$(Tminor)'
       Write-Host 'Next version would be $(Tmajor).$[counter($(Tminor), 1)].$(Tpatch).$(Tprerelease)'
     failOnStderr: true
