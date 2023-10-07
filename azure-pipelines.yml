@@ -14,10 +14,75 @@ pool:
 variables:
   - group: CI-pipeline-Variables
 
+
 steps:
 - script: echo Hello, world!
 - script: echo $(DotNetVersion)
   displayName: 'command line statements'
+
+- task: PowerShell@2
+  displayName: 'Version setup'
+  inputs:
+    targetType: 'inline'
+    script: |
+      # Write your PowerShell commands here.
+      $major=$(MAJOR)
+      $minor=$(MINOR) -as [int]
+      $patch=$(PATCH)
+      $prerelease=$(PRE_RELEASE)
+
+      $minor = $minor+1        
+      Write-Host "Current-Version :$major.$(MINOR).$patch.$prerelease"
+
+      Write-Host "Next Version would be : $major.$minor.$patch.$prerelease"
+      
+      $url="https://dev.azure.com/CherryMeAi/Maui%20App%20Suduko/_apis/distributedtask/variablegroups/3?api-version=6.0"
+      $puturl="https://dev.azure.com/CherryMeAi/_apis/distributedtask/variablegroups/3?&api-version=6.0"
+
+      $WebClient = New-Object System.Net.WebClient
+      
+      #key value
+      $key_variable_name="MINOR"
+      
+      # Set Authorization HTTP header with Basic authentication information.
+      $webclient.Headers["Authorization"] = "Bearer  $(System.AccessToken)"
+      
+      Write-Host "Bearer  $(System.AccessToken)"
+
+      $json= $WebClient.DownloadString($url)
+
+      $jsonString = $json | ConvertFrom-Json
+
+      Write-Host "Get JSON - $jsonString"
+      
+      $versionNumber = $jsonString.variables.$key_variable_name.value
+      
+      Write-Host "Get Version = $versionNumber"
+      
+      $jsonString.variables.$key_variable_name.value= $minor
+      $json= $jsonString | ConvertTo-Json -Depth 100 -Compress
+      
+      Write-Host "$json"
+      $pipeline = Invoke-RestMethod -Uri $puturl -Method Put -Body $json -ContentType "application/json" -Headers @{Authorization=("Bearer $(System.AccessToken)")}
+
+      Write-Host "$pipeline"
+      #$authHeader = @{Authorization = "Bearer $(System.AccessToken))"}
+      #Invoke-RestMethod -Method Put -Uri $puturl -Headers $authHeader -ContentType "application/json" -Body ([System.Text.Encoding]::UTF8.GetBytes($json)) | Out-Null
+      
+      $json= $WebClient.DownloadString($url)
+      
+      $jsonString = $json | ConvertFrom-Json
+
+      Write-Host "Get JSON - $jsonString"
+      
+      $versionNumber = $jsonString.variables.$key_variable_name.value
+      
+      Write-Host "Updated to Version counter - $versionNumber"
+
+    failOnStderr: true
+    showWarnings: true
+
+
 
 - task: DownloadSecureFile@1
   inputs:
@@ -53,8 +118,7 @@ steps:
 #       dotnet publish -f net6.0-android -c Release
 
 - powershell: dotnet workload install maui-android
-  displayName: Install .NET MAUI Workload
-  
+  displayName: Maui workload setup
   
 
 - task: CmdLine@2
