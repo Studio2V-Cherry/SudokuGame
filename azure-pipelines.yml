@@ -44,9 +44,9 @@ steps:
       $key_variable_name="MINOR"
       
       # Set Authorization HTTP header with Basic authentication information.
-      $webclient.Headers["Authorization"] = "Bearer  $env:SYSTEM_ACCESSTOKEN"
+      $webclient.Headers["Authorization"] = "Bearer  $(System.AccessToken)"
       
-      Write-Host "Bearer  $env:SYSTEM_ACCESSTOKEN"
+      Write-Host "Bearer  $(System.AccessToken)"
 
       $json= $WebClient.DownloadString($url)
       Write-Host "$json"
