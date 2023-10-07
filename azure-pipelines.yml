@@ -62,6 +62,7 @@ steps:
       $jsonString.variables.$key_variable_name.value= $minor
       $json= $jsonString | ConvertTo-Json -Depth 100 -Compress
       
+      Write-Host "$json"
       $pipeline = Invoke-RestMethod -Uri $puturl -Method Put -Body $json -ContentType "application/json" -Headers @{Authorization=("Bearer {0}" -f $System.AccessToken)}
 
       #$authHeader = @{Authorization = "Bearer $(System.AccessToken))"}
