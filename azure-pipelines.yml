@@ -29,7 +29,7 @@ steps:
       $major=$(MAJOR)
       $minor=$(MINOR) -as [int]
       $patch=$(PATCH)
-      $prerelease=$(PRERELEASE)
+      $prerelease=$(PRE_RELEASE)
 
       $minor = $minor+1        
       Write-Host "Current-Version :$major.$(MINOR).$patch.$prerelease"
