@@ -34,8 +34,10 @@ steps:
     targetType: 'inline'
     script: |
       Write-Host 'current version $(Tmajor).$(Tminor).$(Tpatch).$(Tprerelease)'
-      ##vso[task.setvariable variable=Tminor] $[counter([int]$(Tminor), 1)]
-      Write-Host 'Next version would be $(Tmajor).$[counter($(Tminor), 1)].$(Tpatch).$(Tprerelease)'
+      $CurrentCounter=Tminor -as [int]
+      $pushCounter = $CurrentCounter+1
+      Write-Host '$pushCounter'
+      Write-Host 'Next version would be $(Tmajor).$[counter($Tminor, 1)].$(Tpatch).$(Tprerelease)'
     failOnStderr: true
     showWarnings: true
 
