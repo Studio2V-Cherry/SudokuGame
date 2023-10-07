@@ -28,20 +28,19 @@ steps:
 - script: echo $(DotNetVersion)
   displayName: 'command line statements'
 
-- powershell: |
-   # Write your PowerShell commands here.
-   $CurrentCounter=$(Tminor) -as [int]
-   $pushCounter = $CurrentCounter+1
-   Write-Host "Current-Version : $pushcounter"
-   Write-Host "Next Version - $pushCounter"
-
 - task: PowerShell@2
   displayName: 'Version setup'
   inputs:
     targetType: 'inline'
     script: |
+      # Write your PowerShell commands here.
+      $CurrentCounter=$(Tminor) -as [int]
+      $pushCounter = $CurrentCounter+1
+      $Tminor=$pushCounter
+      Write-Host "Current-Version : $pushcounter"
+      Write-Host "Next Version - $pushCounter"
+
       Write-Host 'current version $(Tmajor).$(Tminor).$(Tpatch).$(Tprerelease)'
-      $Tminor=($(Tminor) -as [int])+1
       Write-Host '$(Tminor)'
       Write-Host 'Next version would be $(Tmajor).$[counter($(Tminor), 1)].$(Tpatch).$(Tprerelease)'
     failOnStderr: true
