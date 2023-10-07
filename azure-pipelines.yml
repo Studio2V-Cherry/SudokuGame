@@ -13,14 +13,6 @@ pool:
 
 variables:
   - group: CI-pipeline-Variables
-  - name: Tmajor
-    value: $(MAJOR)
-  - name: Tminor
-    value: $(MINOR)
-  - name: Tpatch
-    value: $(PATCH)
-  - name: Tprerelease
-    value: $(PRE_RELEASE)
 
 
 steps:
@@ -34,15 +26,49 @@ steps:
     targetType: 'inline'
     script: |
       # Write your PowerShell commands here.
-      $CurrentCounter=$(Tminor) -as [int]
-      $pushCounter = $CurrentCounter+1
-      $Tminor=$pushCounter
-      Write-Host "Current-Version : $pushcounter"
-      Write-Host "Next Version - $pushCounter"
+      $major=$(MAJOR)
+      $minor=$(MINOR) -as [int]
+      $patch=$(PATCH)
+      $prerelease=$(PRERELEASE)
 
-      Write-Host 'current version $(Tmajor).$(Tminor).$(Tpatch).$(Tprerelease)'
-      Write-Host '$(Tminor)'
-      Write-Host 'Next version would be $(Tmajor).$[counter($(Tminor), 1)].$(Tpatch).$(Tprerelease)'
+      $minor = $minor+1        
+      Write-Host "Current-Version :$major.$(MINOR).$patch.$prerelease"
+
+      Write-Host "Next Version would be : $major.$minor.$patch.$prerelease"
+      
+      $url="https://dev.azure.com/CherryMeAi/Maui%20App%20Suduko/_apis/distributedtask/variablegroups/1?api-version=6.0"
+      
+      $WebClient = New-Object System.Net.WebClient
+      
+      #key value
+      $key_variable_name="MINOR"
+      
+      # Set Authorization HTTP header with Basic authentication information.
+      $webclient.Headers["Authorization"] = "Bearer  $env:SYSTEM_ACCESSTOKEN"
+      
+      $json= $WebClient.DownloadString($url)
+      
+      $jsonString = $json | ConvertFrom-Json
+      Write-Host "Get JSON - $jsonString"
+      
+      $versionNumber = $jsonString.variables.$key_variable_name.value
+      
+      Write-Host "Get Version = $versionNumber"
+      
+      $jsonString.variables.$key_variable_name.value= $minor
+      $json= $jsonString | ConvertTo-Json
+      
+      $pipeline = Invoke-RestMethod -Uri $url -Method Put -Body $json -ContentType "application/json" -Headers @{Authorization=("Bearer {0}" -f $env:SYSTEM_ACCESSTOKEN)}
+      
+      $json= $WebClient.DownloadString($url)
+      
+      $jsonString = $json | ConvertFrom-Json
+      Write-Host "Get JSON - $jsonString"
+      
+      $versionNumber = $jsonString.variables.$key_variable_name.value
+      
+      Write-Host "Updated to Version counter - $versionNumber"
+
     failOnStderr: true
     showWarnings: true
 
