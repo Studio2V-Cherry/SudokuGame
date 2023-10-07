@@ -65,6 +65,7 @@ steps:
       Write-Host "$json"
       $pipeline = Invoke-RestMethod -Uri $puturl -Method Put -Body $json -ContentType "application/json" -Headers @{Authorization=("Bearer {0}" -f $System.AccessToken)}
 
+      Write-Host "$pipeline"
       #$authHeader = @{Authorization = "Bearer $(System.AccessToken))"}
       #Invoke-RestMethod -Method Put -Uri $puturl -Headers $authHeader -ContentType "application/json" -Body ([System.Text.Encoding]::UTF8.GetBytes($json)) | Out-Null
       
