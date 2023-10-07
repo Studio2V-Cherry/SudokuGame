@@ -61,7 +61,7 @@ steps:
       $jsonString.variables.$key_variable_name.value= $minor
       $json= $jsonString | ConvertTo-Json
       
-      $pipeline = Invoke-RestMethod -Uri $url -Method Put -Body $json -ContentType "application/json" -Headers @{Authorization=("Bearer {0}" -f $(System.AccessToken))}
+      $pipeline = Invoke-RestMethod -Uri $url -Method Put -Body $json -ContentType "application/json" -Headers @{Authorization=("Bearer {0}" -f $System.AccessToken)}
       
       $json= $WebClient.DownloadString($url)
       
