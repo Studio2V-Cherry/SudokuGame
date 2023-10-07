@@ -5,6 +5,10 @@ using SudokuGame.CoreLogics;
 using SudokuGame.Pages;
 using SudokuGame.Platforms.Android.ControlRendererrers;
 using SudokuGame.Viewmodel;
+using Microsoft.AppCenter;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
+using Core.CrashlyticsHelpers;
 
 namespace SudokuGame;
 
@@ -47,6 +51,9 @@ public static class MauiProgram
         //pages
         builder.Services.AddSingleton<SudokuGame>();
         builder.Services.AddSingleton<StarterPage>();
+
+        //Initialize Crasylytics
+        CrashLogger.Initialize();
 
         return builder.Build();
     }

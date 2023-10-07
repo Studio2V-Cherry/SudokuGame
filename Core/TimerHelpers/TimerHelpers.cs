@@ -1,4 +1,5 @@
-﻿using Core.Models;
+﻿using Core.CrashlyticsHelpers;
+using Core.Models;
 using System.Diagnostics;
 using Timer = System.Timers.Timer;
 
@@ -28,12 +29,19 @@ namespace Core.TimerHelpers
         /// </summary>
         public static void startTimer()
         {
-            _stopwatch = new Stopwatch();
-            _timer = new Timer(1000);
-            _timer.Elapsed += updatedTimer;
+            try
+            {
+                _stopwatch = new Stopwatch();
+                _timer = new Timer(1000);
+                _timer.Elapsed += updatedTimer;
 
-            _timer.Start();
-            _stopwatch.Restart();
+                _timer.Start();
+                _stopwatch.Restart();
+            }
+            catch (Exception e)
+            {
+                CrashLogger.LogException(e);
+            }
         }
 
         /// <summary>
@@ -41,11 +49,18 @@ namespace Core.TimerHelpers
         /// </summary>
         public static void resumeTimer()
         {
-            _timer = new Timer(1000);
-            _timer.Elapsed += updatedTimer;
+            try
+            {
+                _timer = new Timer(1000);
+                _timer.Elapsed += updatedTimer;
 
-            _timer.Start();
-            _stopwatch.Start();
+                _timer.Start();
+                _stopwatch.Start();
+            }
+            catch (Exception e)
+            {
+                CrashLogger.LogException(e);
+            }
         }
 
         /// <summary>
@@ -58,7 +73,6 @@ namespace Core.TimerHelpers
         {
             try
             {
-
                 TimerHelperEventArgs timerHelperEventArgs = new TimerHelperEventArgs()
                 {
                     Timer = $"{_stopwatch.Elapsed.Minutes}:{_stopwatch.Elapsed.Seconds}",
@@ -68,7 +82,7 @@ namespace Core.TimerHelpers
             }
             catch (Exception ex)
             {
-                _ = ex;
+                CrashLogger.LogException(ex);
             }
         }
 
@@ -87,8 +101,15 @@ namespace Core.TimerHelpers
         /// <param name="elapsed">The elapsed.</param>
         public static void setTimer(long elapsed)
         {
-            _stopwatch = _stopwatch ?? new Stopwatch();
-            _stopwatch.Elapsed.Add(new TimeSpan(elapsed));
+            try
+            {
+                _stopwatch = _stopwatch ?? new Stopwatch();
+                _stopwatch.Elapsed.Add(new TimeSpan(elapsed));
+            }
+            catch (Exception e)
+            {
+                CrashLogger.LogException(e);
+            }
         }
 
         /// <summary>
@@ -96,11 +117,18 @@ namespace Core.TimerHelpers
         /// </summary>
         public static void resetTimer()
         {
-            if (_timer != null)
+            try
             {
-                _stopwatch = new Stopwatch();
-                _timer.Stop();
-                _timer.Elapsed -= updatedTimer;
+                if (_timer != null)
+                {
+                    _stopwatch = new Stopwatch();
+                    _timer.Stop();
+                    _timer.Elapsed -= updatedTimer;
+                }
+            }
+            catch (Exception e)
+            {
+                CrashLogger.LogException(e);
             }
         }
 

@@ -1,4 +1,5 @@
 ﻿using Android.Content;
+using Core.CrashlyticsHelpers;
 using Microsoft.Maui.Controls.Compatibility.Platform.Android.FastRenderers;
 using Microsoft.Maui.Controls.Platform;
 using SudokuGame.CommonControls;
@@ -64,17 +65,24 @@ namespace SudokuGame.Platforms.Android.ControlRendererrers
         /// <param name="frame">The frame.</param>
         private void frameBackgroundChange(FrameControl frame)
         {
-            if (frame.SelectedBackground)
+            try
             {
-                Control.SetBackgroundColor(Color.ParseColor("#E9DDD4"));
+                if (frame.SelectedBackground)
+                {
+                    Control.SetBackgroundColor(Color.ParseColor("#E9DDD4"));
+                }
+                else if (frame.cellRegion % 2 == 1)
+                {
+                    Control.SetBackgroundColor(Color.ParseColor("#F2F1F0"));
+                }
+                else
+                {
+                    Control.SetBackgroundColor(Color.Transparent);
+                }
             }
-            else if (frame.cellRegion % 2 == 1)
+            catch (Exception e)
             {
-                Control.SetBackgroundColor(Color.ParseColor("#F2F1F0"));
-            }
-            else
-            {
-                Control.SetBackgroundColor(Color.Transparent);
+                CrashLogger.LogException(e);
             }
         }
     }

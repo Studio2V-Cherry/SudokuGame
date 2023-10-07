@@ -1,4 +1,5 @@
 ﻿using Android.Content;
+using Core.CrashlyticsHelpers;
 using Microsoft.Maui.Controls.Compatibility.Platform.Android.FastRenderers;
 using Microsoft.Maui.Controls.Platform;
 using SudokuGame.CommonControls;
@@ -66,20 +67,27 @@ namespace SudokuGame.Platforms.Android.ControlRendererrers
         /// <param name="label">The label.</param>
         private void LabelConfigChange(LabelControl label)
         {
-            if (!string.IsNullOrEmpty(label.Text))
+            try
             {
-                if (label.isLocked)
+                if (!string.IsNullOrEmpty(label.Text))
                 {
-                    label.TextColor = Colors.DimGray;
+                    if (label.isLocked)
+                    {
+                        label.TextColor = Colors.DimGray;
+                    }
+                    else if (label.isCellWrong && !label.Text.Equals(label.cellOriginalValue))
+                    {
+                        label.TextColor = Colors.Red;
+                    }
+                    else
+                    {
+                        label.TextColor = Colors.Black;
+                    }
                 }
-                else if (label.isCellWrong && !label.Text.Equals(label.cellOriginalValue))
-                {
-                    label.TextColor = Colors.Red;
-                }
-                else
-                {
-                    label.TextColor = Colors.Black;
-                }
+            }
+            catch (Exception e)
+            {
+                CrashLogger.LogException(e);
             }
         }
     }

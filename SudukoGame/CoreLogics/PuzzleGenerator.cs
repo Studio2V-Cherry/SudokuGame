@@ -1,4 +1,5 @@
-﻿using Core.LocalStorageHelper;
+﻿using Core.CrashlyticsHelpers;
+using Core.LocalStorageHelper;
 using Core.Models;
 using Core.TimerHelpers;
 using SudokuGame.Viewmodel;
@@ -65,27 +66,39 @@ namespace SudokuGame.CoreLogics
         /// <param name="instance">The instance.</param>
         public async Task savePuzzle(Board solvedSuduko, Board CurrentGeneratedSuduko, ObservableCollection<SudukoBoardModel> instance)
         {
-            List<int> solvedSudukoList = new List<int>();
-            List<int> CurrentGeneratedSudukoList = new List<int>();
-
-            for (int i = 0; i < 81; i++)
+            try
             {
-                solvedSudukoList.Add(solvedSuduko[i]);
-                CurrentGeneratedSudukoList.Add(CurrentGeneratedSuduko[i]);
+                CrashLogger.TrackEvent(Core.Constants.loggerEnum.method);
+                List<int> solvedSudukoList = new List<int>();
+                List<int> CurrentGeneratedSudukoList = new List<int>();
+
+                for (int i = 0; i < 81; i++)
+                {
+                    solvedSudukoList.Add(solvedSuduko[i]);
+                    CurrentGeneratedSudukoList.Add(CurrentGeneratedSuduko[i]);
+                }
+
+                SudukoLocalDataHelper sudukoLocalDataHelper = new SudukoLocalDataHelper()
+                {
+                    SolvedBoard = JsonSerializer.Serialize(solvedSudukoList),
+                    GeneratedBoard = JsonSerializer.Serialize(CurrentGeneratedSudukoList),
+                    elapsed = TimerHelpers.getElapsed().Ticks,
+                    CurrentBoardInstance = JsonSerializer.Serialize(instance)
+                };
+                var z = await _storageHelper.SaveInstanceAsync(sudukoLocalDataHelper);
+                if (z != 0)
+                {
+                    IsSudokuHistory = true;
+                    OnPropertyChanged(nameof(IsSudokuHistory));
+                }
+                else if (z == -1)
+                {
+                    //[todo] exception logged breadcrumb add MCToolkit
+                }
             }
-
-            SudukoLocalDataHelper sudukoLocalDataHelper = new SudukoLocalDataHelper()
+            catch (Exception e)
             {
-                SolvedBoard = JsonSerializer.Serialize(solvedSudukoList),
-                GeneratedBoard = JsonSerializer.Serialize(CurrentGeneratedSudukoList),
-                elapsed = TimerHelpers.getElapsed().Ticks,
-                CurrentBoardInstance = JsonSerializer.Serialize(instance)
-            };
-            var z = await _storageHelper.SaveInstanceAsync(sudukoLocalDataHelper);
-            if (z != 0)
-            {
-                IsSudokuHistory = true;
-                OnPropertyChanged(nameof(IsSudokuHistory));
+                CrashLogger.LogException(e);
             }
         }
 
@@ -97,46 +110,54 @@ namespace SudokuGame.CoreLogics
         /// <returns></returns>
         public async Task<Tuple<Board, Board, List<SudukoBoardModel>>> GeneratePuzzleAsync(List<SudukoBoardModel> FastSudukoBoardModel)
         {
-            Board SolvedSudokuBoard = new Board();
-            Board SudokuBoard = new Board();
-
-            if (BaseViewmodel.Instance.IsSudokuHistorySelected)
+            try
             {
-                var storageHelper = await _storageHelper.GetSavedInstanceAsync();
-                var SolvedSudokuBoardList = JsonSerializer.Deserialize<List<int>>(storageHelper.FirstOrDefault().SolvedBoard);
-                var SudokuBoardList = JsonSerializer.Deserialize<List<int>>(storageHelper.FirstOrDefault().GeneratedBoard);
-                for (int i = 0; i < 81; i++)
+                Board SolvedSudokuBoard = new Board();
+                Board SudokuBoard = new Board();
+
+                if (BaseViewmodel.Instance.IsSudokuHistorySelected)
                 {
-                    SolvedSudokuBoard.PutCell(i, SolvedSudokuBoardList[i]);
-                    SudokuBoard.PutCell(i, SudokuBoardList[i]);
-                }
-
-                var FastSudukoBoardModelInstance = JsonSerializer.Deserialize<List<SudukoBoardModel>>(storageHelper.FirstOrDefault().CurrentBoardInstance);
-                
-                TimerHelpers.setTimer(storageHelper.FirstOrDefault().elapsed);
-
-                return new Tuple<Board, Board, List<SudukoBoardModel>>(SolvedSudokuBoard, SudokuBoard, FastSudukoBoardModelInstance);
-            }
-            else
-            {
-                SolvedSudokuBoard = Factory.Solution(random.Next(6, 25));
-                SudokuBoard = Factory.Puzzle(SolvedSudokuBoard, random, QuadsToCut: random.Next(1, 8), random.Next(1, 8), random.Next(1, 8));
-
-                int places = 0;
-                for (int i = 0; i < 9; i++)
-                {
-                    for (int j = 0; j < 9; j++, places++)
+                    var storageHelper = await _storageHelper.GetSavedInstanceAsync();
+                    var SolvedSudokuBoardList = JsonSerializer.Deserialize<List<int>>(storageHelper.FirstOrDefault().SolvedBoard);
+                    var SudokuBoardList = JsonSerializer.Deserialize<List<int>>(storageHelper.FirstOrDefault().GeneratedBoard);
+                    for (int i = 0; i < 81; i++)
                     {
-                        FastSudukoBoardModel[places].rrow = j;
-                        FastSudukoBoardModel[places].isLocked = (SudokuBoard[places] != 0);
-                        FastSudukoBoardModel[places].ccol = i;
-                        FastSudukoBoardModel[places].Cell = places;
-                        FastSudukoBoardModel[places].OriginalCellVal = SolvedSudokuBoard[places].ToString();
-                        FastSudukoBoardModel[places].CellVal = (SudokuBoard[places] == 0) ? "" : SudokuBoard[places].ToString();
+                        SolvedSudokuBoard.PutCell(i, SolvedSudokuBoardList[i]);
+                        SudokuBoard.PutCell(i, SudokuBoardList[i]);
                     }
+
+                    var FastSudukoBoardModelInstance = JsonSerializer.Deserialize<List<SudukoBoardModel>>(storageHelper.FirstOrDefault().CurrentBoardInstance);
+
+                    TimerHelpers.setTimer(storageHelper.FirstOrDefault().elapsed);
+
+                    return new Tuple<Board, Board, List<SudukoBoardModel>>(SolvedSudokuBoard, SudokuBoard, FastSudukoBoardModelInstance);
                 }
-                TimerHelpers.resetTimer();
-                return new Tuple<Board, Board, List<SudukoBoardModel>>(SolvedSudokuBoard, SudokuBoard, FastSudukoBoardModel);
+                else
+                {
+                    SolvedSudokuBoard = Factory.Solution(random.Next(6, 25));
+                    SudokuBoard = Factory.Puzzle(SolvedSudokuBoard, random, QuadsToCut: random.Next(1, 8), random.Next(1, 8), random.Next(1, 8));
+
+                    int places = 0;
+                    for (int i = 0; i < 9; i++)
+                    {
+                        for (int j = 0; j < 9; j++, places++)
+                        {
+                            FastSudukoBoardModel[places].rrow = j;
+                            FastSudukoBoardModel[places].isLocked = (SudokuBoard[places] != 0);
+                            FastSudukoBoardModel[places].ccol = i;
+                            FastSudukoBoardModel[places].Cell = places;
+                            FastSudukoBoardModel[places].OriginalCellVal = SolvedSudokuBoard[places].ToString();
+                            FastSudukoBoardModel[places].CellVal = (SudokuBoard[places] == 0) ? "" : SudokuBoard[places].ToString();
+                        }
+                    }
+                    TimerHelpers.resetTimer();
+                    return new Tuple<Board, Board, List<SudukoBoardModel>>(SolvedSudokuBoard, SudokuBoard, FastSudukoBoardModel);
+                }
+            }
+            catch (Exception e)
+            {
+                CrashLogger.LogException(e);
+                return new Tuple<Board, Board, List<SudukoBoardModel>>(new Board(),new Board(),new List<SudukoBoardModel>());
             }
         }
     }
