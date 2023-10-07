@@ -46,8 +46,11 @@ steps:
       # Set Authorization HTTP header with Basic authentication information.
       $webclient.Headers["Authorization"] = "Bearer  $env:SYSTEM_ACCESSTOKEN"
       
+      Write-Host "Bearer  $env:SYSTEM_ACCESSTOKEN"
+
       $json= $WebClient.DownloadString($url)
-      
+      Write-Host "$json"
+
       $jsonString = $json | ConvertFrom-Json
       Write-Host "Get JSON - $jsonString"
       
