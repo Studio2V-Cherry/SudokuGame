@@ -51,7 +51,7 @@ steps:
       $json= $WebClient.DownloadString($url)
 
       $jsonString = $json | ConvertFrom-Json
-      
+      $jsonString=$jsonString.value[0]
       Write-Host "Get JSON - $jsonString"
       
       $versionNumber = $jsonString.variables.$key_variable_name.value
