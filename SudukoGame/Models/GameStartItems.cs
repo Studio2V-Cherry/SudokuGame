@@ -3,7 +3,7 @@
 namespace SudokuGame.Models
 {
     /// <summary>
-    /// 
+    /// game items
     /// </summary>
     /// <seealso cref="SudokuGame.Viewmodel.BaseViewmodel" />
     public class GameStartModel : BaseViewmodel

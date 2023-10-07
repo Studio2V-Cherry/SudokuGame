@@ -1,7 +1,7 @@
 ﻿namespace Core.Models
 {
     /// <summary>
-    /// 
+    /// timer helper instance logger argument
     /// </summary>
     public class TimerHelperEventArgs
     {

@@ -76,6 +76,8 @@
 
 	<ItemGroup>
 	  <PackageReference Include="akgul.Maui.DataGrid" Version="3.0.0" />
+	  <PackageReference Include="Microsoft.AppCenter.Analytics" Version="5.0.3" />
+	  <PackageReference Include="Microsoft.AppCenter.Crashes" Version="5.0.3" />
 	  <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 	  <PackageReference Include="PCLStorage" Version="1.0.2" />
 	  <PackageReference Include="sqlite-net-pcl" Version="1.8.116" />

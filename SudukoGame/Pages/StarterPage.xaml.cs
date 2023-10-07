@@ -1,3 +1,4 @@
+using Core.CrashlyticsHelpers;
 using SudokuGame.CoreLogics;
 using SudokuGame.Viewmodel;
 
@@ -36,9 +37,16 @@ public partial class StarterPage : ContentPage
     /// </summary>
     public StarterPage()
     {
-        _sudukogeneratorViewmodel.configurePage();
-        InitializeComponent();
-        this.BindingContext = _baseViewmodel;
+        try
+        {
+            _sudukogeneratorViewmodel.configurePage();
+            InitializeComponent();
+            this.BindingContext = _baseViewmodel;
+        }
+        catch (Exception e)
+        {
+            CrashLogger.LogException(e);
+        }
     }
 
     /// <summary>
@@ -59,7 +67,15 @@ public partial class StarterPage : ContentPage
     /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
     private async void playSudukoGame(object sender, EventArgs e)
     {
-        await Navigation.PushAsync(new SudokuGame());
+        try
+        {
+            CrashLogger.TrackEvent(Core.Constants.loggerEnum.page);
+            await Navigation.PushAsync(new SudokuGame());
+        }
+        catch (Exception ex)
+        {
+            CrashLogger.LogException(ex);
+        }
     }
 
     /// <summary>
@@ -69,6 +85,13 @@ public partial class StarterPage : ContentPage
     /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
     private async void resumeSudukoGame(object sender, EventArgs e)
     {
-        await Navigation.PushAsync(new SudokuGame(true));
+        try
+        {
+            await Navigation.PushAsync(new SudokuGame(true));
+        }
+        catch (Exception ex)
+        {
+            CrashLogger.LogException(ex);
+        }
     }
 }

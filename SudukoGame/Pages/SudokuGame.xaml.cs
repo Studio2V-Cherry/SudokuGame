@@ -1,4 +1,5 @@
-﻿using Core.TimerHelpers;
+﻿using Core.CrashlyticsHelpers;
+using Core.TimerHelpers;
 using SudokuGame.Viewmodel;
 
 namespace SudokuGame;
@@ -19,11 +20,19 @@ public partial class SudokuGame : ContentPage
     /// <param name="isResume">if set to <c>true</c> [is resume].</param>
     public SudokuGame(bool isResume = false)
     {
-        BaseViewmodel.Instance.IsSudokuHistorySelected = isResume;
-        _sudukoGeneratorViewmodel.IsInGeneration = true;
+        try
+        {
+            CrashLogger.TrackEvent(Core.Constants.loggerEnum.page);
+            BaseViewmodel.Instance.IsSudokuHistorySelected = isResume;
+            _sudukoGeneratorViewmodel.IsInGeneration = true;
 
-        InitializeComponent();
-        this.BindingContext = _sudukoGeneratorViewmodel;
+            InitializeComponent();
+            this.BindingContext = _sudukoGeneratorViewmodel;
+        }
+        catch (Exception e)
+        {
+            CrashLogger.LogException(e);
+        }
     }
 
     /// <summary>
@@ -32,17 +41,24 @@ public partial class SudokuGame : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-        await _sudukoGeneratorViewmodel.FirstTimeSuduko();
-        if (BaseViewmodel.Instance.IsSudokuHistorySelected)
+        try
         {
-            TimerHelpers.resumeTimer();
+            CrashLogger.TrackEvent(Core.Constants.loggerEnum.page);
+            await _sudukoGeneratorViewmodel.FirstTimeSuduko();
+            if (BaseViewmodel.Instance.IsSudokuHistorySelected)
+            {
+                TimerHelpers.resumeTimer();
+            }
+            else
+            {
+                TimerHelpers.startTimer();
+            }
+            BaseViewmodel.Instance.IsSudokuHistorySelected = false;
         }
-        else
+        catch (Exception e)
         {
-            TimerHelpers.startTimer();
+            CrashLogger.LogException(e);
         }
-        BaseViewmodel.Instance.IsSudokuHistorySelected = false;
-
     }
 
     /// <summary>
@@ -52,7 +68,14 @@ public partial class SudokuGame : ContentPage
     /// <param name="e">The <see cref="ToggledEventArgs" /> instance containing the event data.</param>
     private void markErrorToggled(object sender, ToggledEventArgs e)
     {
-        _sudukoGeneratorViewmodel.markErrors(e.Value);
+        try
+        {
+            _sudukoGeneratorViewmodel.markErrors(e.Value);
+        }
+        catch (Exception ex)
+        {
+            CrashLogger.LogException(ex);
+        }
     }
 
     /// <summary>
@@ -61,8 +84,15 @@ public partial class SudokuGame : ContentPage
     protected override async void OnDisappearing()
     {
         base.OnDisappearing();
-        await _sudukoGeneratorViewmodel.savesuduko();
-        parentGrid
-            .Children.Clear();
+        try
+        {
+            await _sudukoGeneratorViewmodel.savesuduko();
+            parentGrid
+                .Children.Clear();
+        }
+        catch (Exception e)
+        {
+            CrashLogger.LogException(e);
+        }
     }
 }

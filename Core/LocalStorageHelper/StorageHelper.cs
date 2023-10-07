@@ -1,4 +1,6 @@
-﻿using Core.Models;
+﻿using Core.Constants;
+using Core.CrashlyticsHelpers;
+using Core.Models;
 using Microsoft.Maui.Platform;
 using SQLite;
 
@@ -36,7 +38,7 @@ namespace Core.LocalStorageHelper
         {
             try
             {
-
+                CrashLogger.TrackEvent(loggerEnum.method);
                 if (Database is not null)
                     return;
                 Database = new SQLiteAsyncConnection(Constants.Constants.DatabasePath, Constants.Constants.Flags);
@@ -44,7 +46,7 @@ namespace Core.LocalStorageHelper
             }
             catch (Exception e)
             {
-                _ = e;
+                CrashLogger.LogException(e);
             }
         }
 
@@ -57,10 +59,6 @@ namespace Core.LocalStorageHelper
         {
             await Init();
             return await Database.Table<SudukoLocalDataHelper>().ToListAsync();
-            //return await Database.Table<SudukoLocalDataHelper>().Where(t => t.Done).ToListAsync();
-
-            // SQL queries are also possible
-            //return await Database.QueryAsync<SudukoLocalDataHelper>("SELECT * FROM [SudukoLocalDataHelper] WHERE [Done] = 0");
         }
 
         public async Task InitialiaeDb()
@@ -85,21 +83,31 @@ namespace Core.LocalStorageHelper
         /// <returns></returns>
         public async Task<List<SudukoLocalDataHelper>> GetSavedInstanceAsync()
         {
-            await Init();
-            return await Database.Table<SudukoLocalDataHelper>().ToListAsync();
+            try
+            {
+                CrashLogger.TrackEvent(loggerEnum.method);
+                await Init();
+                return await Database.Table<SudukoLocalDataHelper>().ToListAsync();
+            }
+            catch (Exception e)
+            {
+                CrashLogger.LogException(e);
+                return null;
+            }
         }
 
         public async Task<bool> isDataPresent()
-        {
-            await Init();
+        {            
             try
             {
+                CrashLogger.TrackEvent(loggerEnum.method);
+                await Init();
                 var res = await Database.Table<SudukoLocalDataHelper>().CountAsync();
                 return res != 0;
             }
             catch(Exception e)
             {
-                _ = e;
+                CrashLogger.LogException(e);
                 return false;
             }
         }
@@ -111,12 +119,18 @@ namespace Core.LocalStorageHelper
         /// <returns></returns>
         public async Task<int> SaveInstanceAsync(SudukoLocalDataHelper item)
         {
-            await Init();
-            item.BoardSavedName = Constants.DBHelperConstants.SudukoGenerated;
-            //if (item.ID != 0)
-            return await Database.InsertOrReplaceAsync(item);
-            //else
-            //    return await Database.InsertAsync(item);
+            try
+            {
+                CrashLogger.TrackEvent(loggerEnum.method);
+                await Init();
+                item.BoardSavedName = Constants.DBHelperConstants.SudukoGenerated;
+                return await Database.InsertOrReplaceAsync(item);
+            }
+            catch (Exception e)
+            {
+                CrashLogger.LogException(e);
+                return -1;
+            }
         }
 
         /// <summary>

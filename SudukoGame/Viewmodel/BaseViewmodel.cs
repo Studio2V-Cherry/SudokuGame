@@ -1,4 +1,5 @@
-﻿using SudokuGame.Models;
+﻿using Core.CrashlyticsHelpers;
+using SudokuGame.Models;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -6,24 +7,12 @@ using System.Runtime.CompilerServices;
 namespace SudokuGame.Viewmodel
 {
     /// <summary>
-    /// 
+    /// base viewmodel for common properties and functionalities
     /// </summary>
     /// <seealso cref="System.ComponentModel.INotifyPropertyChanged" />
     public class BaseViewmodel : INotifyPropertyChanged
     {
-        /// <summary>
-        /// Gets or sets the navigation.
-        /// </summary>
-        /// <value>
-        /// The navigation.
-        /// </value>
-        private INavigation navigation { get; set; }
-
-        /// <summary>
-        /// Occurs when a property value changes.
-        /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
-
+        #region fields
         /// <summary>
         /// The game start model
         /// </summary>
@@ -33,6 +22,23 @@ namespace SudokuGame.Viewmodel
         /// The instance
         /// </summary>
         private static BaseViewmodel _instance;
+
+        /// <summary>
+        /// The is sudoku history
+        /// </summary>
+        private bool _isSudokuHistory;
+
+        /// <summary>
+        /// The is sudoku history selected
+        /// </summary>
+        private bool _isSudokuHistorySelected;
+        #endregion
+
+        #region public
+        /// <summary>
+        /// Occurs when a property value changes.
+        /// </summary>
+        public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
         /// Gets the instance.
@@ -50,10 +56,6 @@ namespace SudokuGame.Viewmodel
         }
 
         /// <summary>
-        /// The is sudoku history
-        /// </summary>
-        private bool _isSudokuHistory;
-        /// <summary>
         /// Gets or sets a value indicating whether this instance is sudoku history.
         /// </summary>
         /// <value>
@@ -69,10 +71,7 @@ namespace SudokuGame.Viewmodel
             }
         }
 
-        /// <summary>
-        /// The is sudoku history selected
-        /// </summary>
-        private bool _isSudokuHistorySelected;
+
         /// <summary>
         /// Gets or sets a value indicating whether this instance is sudoku history selected.
         /// </summary>
@@ -89,17 +88,6 @@ namespace SudokuGame.Viewmodel
             }
         }
 
-
-
-        /// <summary>
-        /// Gets the navigation command.
-        /// </summary>
-        /// <value>
-        /// The navigation command.
-        /// </value>
-        public Command NavigationCommand => new Command<Page>(PushPage);
-
-
         /// <summary>
         /// Gets or sets the game start models.
         /// </summary>
@@ -115,22 +103,35 @@ namespace SudokuGame.Viewmodel
                 OnPropertyChanged();
             }
         }
+        #endregion
+
+        #region commands
+        /// <summary>
+        /// Gets the navigation command.
+        /// </summary>
+        /// <value>
+        /// The navigation command.
+        /// </value>
+        public Command NavigationCommand => new Command<Page>(PushPage);
+
+        /// <summary>
+        /// Gets or sets the navigation.
+        /// </summary>
+        /// <value>
+        /// The navigation.
+        /// </value>
+        private INavigation navigation { get; set; } 
+        #endregion
 
         /// <summary>
         /// Prevents a default instance of the <see cref="BaseViewmodel" /> class from being created.
         /// </summary>
         public BaseViewmodel()
         {
-            //GameStartModels = new ObservableCollection<GameStartModel>()
-            //{
-            //   new GameStartModel()
-            //   {
-            //       GameName="Play Suduko",
-            //       IsVisible=true
-            //   }
-            //};
+
         }
 
+        #region methods
         /// <summary>
         /// Sets the navigation.
         /// </summary>
@@ -156,6 +157,7 @@ namespace SudokuGame.Viewmodel
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+        } 
+        #endregion
     }
 }

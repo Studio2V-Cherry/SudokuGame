@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 namespace SudokuGame.Models
 {
     /// <summary>
-    /// 
+    /// numbers models
     /// </summary>
     /// <seealso cref="System.ComponentModel.INotifyPropertyChanged" />
     public class Numbers : INotifyPropertyChanged
