@@ -42,6 +42,7 @@ public partial class SudokuGame : ContentPage
             TimerHelpers.startTimer();
         }
         BaseViewmodel.Instance.IsSudokuHistorySelected = false;
+
     }
 
     /// <summary>

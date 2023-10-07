@@ -98,6 +98,7 @@ namespace Core.TimerHelpers
         {
             if (_timer != null)
             {
+                _stopwatch = new Stopwatch();
                 _timer.Stop();
                 _timer.Elapsed -= updatedTimer;
             }

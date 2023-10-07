@@ -1,6 +1,9 @@
 ﻿using Core.LocalStorageHelper;
+using Microsoft.Maui.Controls.Compatibility.Hosting;
+using SudokuGame.CommonControls;
 using SudokuGame.CoreLogics;
 using SudokuGame.Pages;
+using SudokuGame.Platforms.Android.ControlRendererrers;
 using SudokuGame.Viewmodel;
 
 namespace SudokuGame;
@@ -19,6 +22,14 @@ public static class MauiProgram
         var builder = MauiApp.CreateBuilder();
         builder
             .UseMauiApp<App>()
+            .UseMauiCompatibility()
+            .ConfigureMauiHandlers(handlers =>
+            {
+#if __ANDROID__
+                handlers.AddCompatibilityRenderer(typeof(FrameControl), typeof(FrameControlRenderrer));
+                handlers.AddCompatibilityRenderer(typeof(LabelControl), typeof(LabelControlRenderer));
+#endif
+            })
             .ConfigureFonts(fonts =>
             {
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");

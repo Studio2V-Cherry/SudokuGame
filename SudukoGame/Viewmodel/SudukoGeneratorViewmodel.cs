@@ -297,7 +297,7 @@ namespace SudokuGame.Viewmodel
         /// <value>
         /// The regenerate sudoku command.
         /// </value>
-        public ICommand regenerateSudokuCommand => new Command(async () => await PopulateSuduko());
+        public ICommand regenerateSudokuCommand => new Command(async () => await RegenerateSudoku());
 
         /// <summary>
         /// Gets the undo suduko command.
@@ -329,53 +329,11 @@ namespace SudokuGame.Viewmodel
         {
             SudukoBoardModel.All(x =>
             {
-                x.SelectedColor = Colors.Transparent;
+                x.IsSelected = false;
                 return true;
             });
         }
 
-        /// <summary>
-        /// Resets all number cells.
-        /// </summary>
-        private void resetAllNumberCells()
-        {
-            SudukoBoardModel.All(x =>
-            {
-                if (x.isLocked)
-                    x.TextColor = Colors.DarkGray;
-                return true;
-            });
-        }
-
-        /// <summary>
-        /// Highlights the regions.
-        /// </summary>
-        /// <param name="sudukoBoardModel">The suduko board model.</param>
-        private void highlightRegions(SudukoBoardModel sudukoBoardModel)
-        {
-            var num = sudukoBoardModel.CellVal;
-            var cellRegion = sudukoBoardModel.cellRegion;
-            int i = 0;
-            int j = 0;
-            SudukoBoardModel.All(x =>
-            {
-                if (x.rrow == sudukoBoardModel.rrow && x.ccol == i)
-                {
-                    x.BackgroundColor = Color.FromArgb("#C5C5C5");
-                    i++;
-                }
-                if (x.rrow == j && x.ccol == sudukoBoardModel.ccol)
-                {
-                    x.BackgroundColor = Color.FromArgb("#C5C5C5");
-                    j++;
-                }
-                if (x.CellVal == sudukoBoardModel.CellVal && !string.IsNullOrEmpty(x.CellVal))
-                {
-                    x.BackgroundColor = Color.FromArgb("#C5C5C5");
-                }
-                return true;
-            });
-        }
 
         /// <summary>
         /// Frames the selected model.
@@ -390,7 +348,7 @@ namespace SudokuGame.Viewmodel
                     sudukoBoardModel.CellVal = selectedNumbers.number;
                     SudokuBoard[sudukoBoardModel.Cell] = int.Parse(selectedNumbers.number);
                     SudukoAddOperation(sudukoBoardModel.Cell, selectedNumbers.number);
-                    
+
                     sudukoBoardModel.CheckOriginalValue(MarkError);
                     isSudukoSolved();
                 }
@@ -413,7 +371,7 @@ namespace SudokuGame.Viewmodel
             SudukoBoardModel.All(x =>
             {
                 if (x.CellVal == numbers.number && !string.IsNullOrEmpty(x.CellVal))
-                    x.SelectedColor = Color.FromArgb("#E9DDD4");
+                    x.IsSelected = true;
                 return true;
             });
         }
@@ -424,13 +382,8 @@ namespace SudokuGame.Viewmodel
         /// <param name="numbers">The numbers.</param>
         private void highlightNumberFrames(Numbers numbers)
         {
-            resetAllNumberCells();
             SudukoBoardModel.All(x =>
             {
-                if (x.CellVal == numbers.number && !string.IsNullOrEmpty(x.CellVal))
-                {
-                    x.TextColor = Colors.Black;
-                }
                 if (!x.isLocked)
                 {
                     x.CheckOriginalValue(MarkError);
@@ -482,7 +435,6 @@ namespace SudokuGame.Viewmodel
                 return true;
             });
             selectedNumbers = null;
-            resetAllNumberCells();
             resetAllCells();
         }
 
@@ -535,6 +487,7 @@ namespace SudokuGame.Viewmodel
         /// <param name="check">if set to <c>true</c> [check].</param>
         public void markErrors(bool check)
         {
+            MarkError = check;
             SudukoBoardModel.All(x =>
             {
                 x.CheckOriginalValue(check);
@@ -595,26 +548,14 @@ namespace SudokuGame.Viewmodel
                 {
                     for (int j = 0; j < 3; j++)
                     {
-                        if (region % 2 == 1)
-                        {
-                            FastSudukoBoardModel[places].BackgroundColor = Color.FromArgb("#F2F1F0");
-                        }
                         FastSudukoBoardModel[places++].cellRegion = region;
                     }
                     for (int k = 0; k < 3; k++)
                     {
-                        if ((region + 1) % 2 == 1)
-                        {
-                            FastSudukoBoardModel[places].BackgroundColor = Color.FromArgb("#F2F1F0");
-                        }
                         FastSudukoBoardModel[places++].cellRegion = region + 1;
                     }
                     for (int l = 0; l < 3; l++)
                     {
-                        if ((region + 2) % 2 == 1)
-                        {
-                            FastSudukoBoardModel[places].BackgroundColor = Color.FromArgb("#F2F1F0");
-                        }
                         FastSudukoBoardModel[places++].cellRegion = region + 2;
                     }
                 }
@@ -650,6 +591,24 @@ namespace SudokuGame.Viewmodel
         }
 
         /// <summary>
+        /// Regenerates the sudoku.
+        /// </summary>
+        private async Task RegenerateSudoku()
+        {
+            await PopulateSuduko();
+            if (Instance.IsSudokuHistorySelected)
+            {
+                TimerHelpers.resumeTimer();
+            }
+            else
+            {
+                TimerHelpers.startTimer();
+            }
+            Instance.IsSudokuHistorySelected = false;
+
+        }
+
+        /// <summary>
         /// Populates the suduko.
         /// </summary>
         public async Task PopulateSuduko()
@@ -659,7 +618,7 @@ namespace SudokuGame.Viewmodel
                 IsInGeneration = false;
 
                 var puzzle = await _puzzleGenerator.GeneratePuzzleAsync(FastSudukoBoardModel);
-                
+
 
                 SolvedSudokuBoard = puzzle.Item1;
                 SudokuBoard = new Board(puzzle.Item2);

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Text.Json.Serialization;
 
 namespace Core.Models
 {
@@ -10,12 +11,24 @@ namespace Core.Models
     public class SudukoBoardModel : INotifyPropertyChanged
     {
         /// <summary>
+        /// The cell region
+        /// </summary>
+        private int _cellRegion;
+        /// <summary>
         /// Gets or sets the cell region.
         /// </summary>
         /// <value>
         /// The cell region.
         /// </value>
-        public int cellRegion { get; set; }
+        public int cellRegion
+        {
+            get => _cellRegion;
+            set
+            {
+                _cellRegion = value;
+                OnPropertyChanged();
+            }
+        }
         /// <summary>
         /// The rrow
         /// </summary>
@@ -84,71 +97,55 @@ namespace Core.Models
             }
         }
 
+
         /// <summary>
-        /// The background color
+        /// The is selected
         /// </summary>
-        private Color _backgroundColor;
+        private bool _isSelected;
+
+
         /// <summary>
-        /// Gets or sets the color of the background.
+        /// Gets or sets a value indicating whether this instance is selected.
         /// </summary>
         /// <value>
-        /// The color of the background.
+        ///   <c>true</c> if this instance is selected; otherwise, <c>false</c>.
         /// </value>
-        public Color BackgroundColor
+        public bool IsSelected
         {
-            get => _backgroundColor;
+            get => _isSelected;
             set
             {
-                _backgroundColor = value;
+                _isSelected = value;
                 OnPropertyChanged();
             }
         }
 
-        /// <summary>
-        /// The selected color
-        /// </summary>
-        private Color _selectedColor;
 
         /// <summary>
-        /// Gets or sets the color of the selected.
+        /// The is cell wrong
+        /// </summary>
+        private bool _isCellWrong;
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this instance is cell wrong.
         /// </summary>
         /// <value>
-        /// The color of the selected.
+        ///   <c>true</c> if this instance is cell wrong; otherwise, <c>false</c>.
         /// </value>
-        public Color SelectedColor
+        [JsonIgnore]
+        public bool IsCellWrong
         {
-            get => _selectedColor;
+            get => _isCellWrong;
             set
             {
-                _selectedColor = value;
-                OnPropertyChanged();
+                _isCellWrong = value;
+                OnPropertyChanged(nameof(IsCellWrong));
             }
         }
 
         /// <summary>
-        /// The text color
+        /// The is locked
         /// </summary>
-        private Color _textColor;
-
-        /// <summary>
-        /// Gets or sets the color of the text.
-        /// </summary>
-        /// <value>
-        /// The color of the text.
-        /// </value>
-        public Color TextColor
-        {
-            get => _textColor;
-            set
-            {
-                if (!isLocked)
-                {
-                    _textColor = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
         private bool _isLocked;
 
         /// <summary>
@@ -159,7 +156,7 @@ namespace Core.Models
         /// </value>
         public bool isLocked
         {
-            get=> _isLocked;
+            get => _isLocked;
             set
             {
                 _isLocked = value;
@@ -168,12 +165,24 @@ namespace Core.Models
         }
 
         /// <summary>
+        /// The original cell value
+        /// </summary>
+        private string _originalCellVal;
+        /// <summary>
         /// Sets the original cell value.
         /// </summary>
         /// <value>
         /// The original cell value.
         /// </value>
-        public string OriginalCellVal { private get; set; }
+        public string OriginalCellVal
+        {
+            get => _originalCellVal;
+            set
+            {
+                _originalCellVal = value;
+                OnPropertyChanged();
+            }
+        }
 
         /// <summary>
         /// Occurs when a property value changes.
@@ -195,20 +204,13 @@ namespace Core.Models
         /// <param name="check">if set to <c>true</c> [check].</param>
         public void CheckOriginalValue(bool check)
         {
-            if (!string.IsNullOrEmpty(CellVal) && check)
+            if (check)
             {
-                if (!CellVal.Equals(OriginalCellVal))
-                {
-                    TextColor = Colors.Red;
-                }
-                else
-                {
-                    TextColor = Colors.Black;
-                }
+                IsCellWrong = !CellVal.Equals(OriginalCellVal);
             }
             else
             {
-                TextColor = Colors.Black;
+                IsCellWrong = false;
             }
         }
     }
