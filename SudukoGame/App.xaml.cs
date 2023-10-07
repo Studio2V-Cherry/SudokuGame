@@ -20,8 +20,10 @@ public partial class App : Application
         InitializeComponent();
         Current.UserAppTheme = AppTheme.Light;
         var navBar = new NavigationPage(new StarterPage());
-        navBar.BarBackgroundColor = Colors.Transparent;
+        navBar.BarBackgroundColor = Colors.White;
+        navBar.BackgroundColor = Colors.Transparent;
         MainPage = navBar;
+        MainPage.BackgroundColor = Colors.Green;
         BaseViewmodel.Instance.setNavigation(navBar.Navigation);
     }
 }

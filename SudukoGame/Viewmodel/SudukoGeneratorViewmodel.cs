@@ -297,7 +297,7 @@ namespace SudokuGame.Viewmodel
         /// <value>
         /// The regenerate sudoku command.
         /// </value>
-        public ICommand regenerateSudokuCommand => new Command(async () => await PopulateSuduko());
+        public ICommand regenerateSudokuCommand => new Command(async () => await RegenerateSudoku());
 
         /// <summary>
         /// Gets the undo suduko command.
@@ -334,7 +334,7 @@ namespace SudokuGame.Viewmodel
             });
         }
 
-        
+
         /// <summary>
         /// Frames the selected model.
         /// </summary>
@@ -348,7 +348,7 @@ namespace SudokuGame.Viewmodel
                     sudukoBoardModel.CellVal = selectedNumbers.number;
                     SudokuBoard[sudukoBoardModel.Cell] = int.Parse(selectedNumbers.number);
                     SudukoAddOperation(sudukoBoardModel.Cell, selectedNumbers.number);
-                    
+
                     sudukoBoardModel.CheckOriginalValue(MarkError);
                     isSudukoSolved();
                 }
@@ -591,6 +591,24 @@ namespace SudokuGame.Viewmodel
         }
 
         /// <summary>
+        /// Regenerates the sudoku.
+        /// </summary>
+        private async Task RegenerateSudoku()
+        {
+            await PopulateSuduko();
+            if (Instance.IsSudokuHistorySelected)
+            {
+                TimerHelpers.resumeTimer();
+            }
+            else
+            {
+                TimerHelpers.startTimer();
+            }
+            Instance.IsSudokuHistorySelected = false;
+
+        }
+
+        /// <summary>
         /// Populates the suduko.
         /// </summary>
         public async Task PopulateSuduko()
@@ -600,7 +618,7 @@ namespace SudokuGame.Viewmodel
                 IsInGeneration = false;
 
                 var puzzle = await _puzzleGenerator.GeneratePuzzleAsync(FastSudukoBoardModel);
-                
+
 
                 SolvedSudokuBoard = puzzle.Item1;
                 SudokuBoard = new Board(puzzle.Item2);
