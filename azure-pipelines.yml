@@ -63,7 +63,7 @@ steps:
       $json= $jsonString | ConvertTo-Json -Depth 100 -Compress
       
       Write-Host "$json"
-      $pipeline = Invoke-RestMethod -Uri $puturl -Method Put -Body $json -ContentType "application/json" -Headers @{Authorization=("Bearer {0}" -f $System.AccessToken)}
+      $pipeline = Invoke-RestMethod -Uri $puturl -Method Put -Body $json -ContentType "application/json" -Headers @{Authorization=("Bearer $(System.AccessToken)")}
 
       Write-Host "$pipeline"
       #$authHeader = @{Authorization = "Bearer $(System.AccessToken))"}
