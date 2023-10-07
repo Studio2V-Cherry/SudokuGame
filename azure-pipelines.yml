@@ -37,7 +37,8 @@ steps:
       Write-Host "Next Version would be : $major.$minor.$patch.$prerelease"
       
       $url="https://dev.azure.com/CherryMeAi/Maui%20App%20Suduko/_apis/distributedtask/variablegroups?groupName=CI-pipeline-Variables&api-version=6.0"
-      
+      $puturl="https://dev.azure.com/CherryMeAi/_apis/distributedtask/variablegroups?groupName=CI-pipeline-Variables&api-version=6.0"
+
       $WebClient = New-Object System.Net.WebClient
       
       #key value
@@ -61,7 +62,7 @@ steps:
       $jsonString.variables.$key_variable_name.value= $minor
       $json= $jsonString | ConvertTo-Json
       
-      $pipeline = Invoke-RestMethod -Uri $url -Method Put -Body $json -ContentType "application/json" -Headers @{Authorization=("Bearer {0}" -f $System.AccessToken)}
+      $pipeline = Invoke-RestMethod -Uri $puturl -Method Put -Body $json -ContentType "application/json" -Headers @{Authorization=("Bearer {0}" -f $System.AccessToken)}
       
       $json= $WebClient.DownloadString($url)
       
