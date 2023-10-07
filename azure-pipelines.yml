@@ -37,7 +37,7 @@ steps:
       Write-Host "Next Version would be : $major.$minor.$patch.$prerelease"
       
       $url="https://dev.azure.com/CherryMeAi/Maui%20App%20Suduko/_apis/distributedtask/variablegroups?groupName=CI-pipeline-Variables&api-version=6.0"
-      $puturl="https://dev.azure.com/CherryMeAi/_apis/distributedtask/variablegroups/1?&api-version=6.0"
+      $puturl="https://dev.azure.com/CherryMeAi/_apis/distributedtask/variablegroups/2?&api-version=6.0"
 
       $WebClient = New-Object System.Net.WebClient
       
@@ -62,14 +62,15 @@ steps:
       $jsonString.variables.$key_variable_name.value= $minor
       $json= $jsonString | ConvertTo-Json -Depth 100 -Compress
       
-      #$pipeline = Invoke-RestMethod -Uri $puturl -Method Put -Body $json -ContentType "application/json" -Headers @{Authorization=("Bearer {0}" -f $System.AccessToken)}
+      $pipeline = Invoke-RestMethod -Uri $puturl -Method Put -Body $json -ContentType "application/json" -Headers @{Authorization=("Bearer {0}" -f $System.AccessToken)}
 
-      $authHeader = @{Authorization = "Bearer $(System.AccessToken))"}
-      Invoke-RestMethod -Method Put -Uri $puturl -Headers $authHeader -ContentType "application/json" -Body ([System.Text.Encoding]::UTF8.GetBytes($json)) | Out-Null
+      #$authHeader = @{Authorization = "Bearer $(System.AccessToken))"}
+      #Invoke-RestMethod -Method Put -Uri $puturl -Headers $authHeader -ContentType "application/json" -Body ([System.Text.Encoding]::UTF8.GetBytes($json)) | Out-Null
       
       $json= $WebClient.DownloadString($url)
       
       $jsonString = $json | ConvertFrom-Json
+      $jsonString=$jsonString.value[0]
       Write-Host "Get JSON - $jsonString"
       
       $versionNumber = $jsonString.variables.$key_variable_name.value
