@@ -37,7 +37,7 @@ steps:
       Write-Host "Next Version would be : $major.$minor.$patch.$prerelease"
       
       $url="https://dev.azure.com/CherryMeAi/Maui%20App%20Suduko/_apis/distributedtask/variablegroups?groupName=CI-pipeline-Variables&api-version=6.0"
-      $puturl="https://dev.azure.com/CherryMeAi/_apis/distributedtask/variablegroups?groupName=CI-pipeline-Variables&api-version=6.0"
+      $puturl="https://dev.azure.com/CherryMeAi/_apis/distributedtask/variablegroups/1?&api-version=6.0"
 
       $WebClient = New-Object System.Net.WebClient
       
