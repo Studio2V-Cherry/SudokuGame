@@ -13,6 +13,15 @@ pool:
 
 variables:
   - group: CI-pipeline-Variables
+  - name: Tmajor
+    value: $(MAJOR)
+  - name: Tminor
+    value: $(MINOR)
+  - name: Tpatch
+    value: $(PATCH)
+  - name: Tprerelease
+    value: $(PRE_RELEASE)
+
 
 steps:
 - script: echo Hello, world!
@@ -53,8 +62,16 @@ steps:
 #       dotnet publish -f net6.0-android -c Release
 
 - powershell: dotnet workload install maui-android
-  displayName: Install .NET MAUI Workload
-  
+  displayName: Maui workload setup
+
+
+- task: PowerShell@2
+  displayName: 'Version setup'
+  inputs:
+    targetType: 'inline'
+    script: |
+     echo current version $(Tmajor).$(Tminor).$(Tpatch).$(Tprerelease)
+     ##vso[]
   
 
 - task: CmdLine@2
