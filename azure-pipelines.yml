@@ -48,10 +48,8 @@ steps:
       
       Write-Host "Bearer  $(System.AccessToken)"
 
-      $json= $WebClient.DownloadString($url)
-      Write-Host "$json"
-
       $jsonString = $json | ConvertFrom-Json
+      $jsonString=$jsonString.value[0]
       Write-Host "Get JSON - $jsonString"
       
       $versionNumber = $jsonString.variables.$key_variable_name.value
