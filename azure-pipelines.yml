@@ -32,9 +32,9 @@ steps:
    # Write your PowerShell commands here.
    $CurrentCounter=$(Tminor) -as [int]
    $pushCounter = $CurrentCounter+1
-   Write-Host "Current-Version : $(pushcounter) "
+   Write-Host "Current-Version : $pushcounter"
    Write-Host "Next Version - $pushCounter"
-   
+
 - task: PowerShell@2
   displayName: 'Version setup'
   inputs:
