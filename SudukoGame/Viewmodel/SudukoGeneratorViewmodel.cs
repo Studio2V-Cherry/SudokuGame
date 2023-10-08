@@ -554,7 +554,6 @@ namespace SudokuGame.Viewmodel
                     TimerHelpers.startTimer();
                 }
                 Instance.IsSudokuHistorySelected = false;
-                Crashes.GenerateTestCrash();
             }
             catch (Exception e)
             {
@@ -680,7 +679,10 @@ namespace SudokuGame.Viewmodel
         /// </summary>
         public void configurePage()
         {
-            populateGrids();
+            if (FastSudukoBoardModel == null||((!FastSudukoBoardModel?.Any())??false))
+            {
+                populateGrids();
+            }
         }
 
         /// <summary>
@@ -711,7 +713,6 @@ namespace SudokuGame.Viewmodel
             if (IsInGeneration)
             {
                 IsInGeneration = false;
-
                 var puzzle = await _puzzleGenerator.GeneratePuzzleAsync(FastSudukoBoardModel);
 
 
