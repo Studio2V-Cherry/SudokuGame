@@ -1,4 +1,5 @@
-﻿using Core.CrashlyticsHelpers;
+﻿using Android.Util;
+using Core.CrashlyticsHelpers;
 using Core.TimerHelpers;
 using SudokuGame.Viewmodel;
 
@@ -23,6 +24,7 @@ public partial class SudokuGame : ContentPage
         try
         {
             CrashLogger.TrackEvent(Core.Constants.loggerEnum.page);
+            _sudukoGeneratorViewmodel.configurePage();
             BaseViewmodel.Instance.IsSudokuHistorySelected = isResume;
             _sudukoGeneratorViewmodel.IsInGeneration = true;
 
@@ -90,6 +92,7 @@ public partial class SudokuGame : ContentPage
             parentGrid
                 .Children.Clear();
             BindingContext=null;
+            //[clear page memory]
         }
         catch (Exception e)
         {

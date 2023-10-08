@@ -1,14 +1,11 @@
-﻿using Core.LocalStorageHelper;
+﻿using Core.CrashlyticsHelpers;
+using Core.LocalStorageHelper;
 using Microsoft.Maui.Controls.Compatibility.Hosting;
 using SudokuGame.CommonControls;
 using SudokuGame.CoreLogics;
 using SudokuGame.Pages;
 using SudokuGame.Platforms.Android.ControlRendererrers;
 using SudokuGame.Viewmodel;
-using Microsoft.AppCenter;
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
-using Core.CrashlyticsHelpers;
 
 namespace SudokuGame;
 
@@ -49,8 +46,8 @@ public static class MauiProgram
         builder.Services.AddSingleton<PuzzleGenerator>();
 
         //pages
-        builder.Services.AddSingleton<SudokuGame>();
-        builder.Services.AddSingleton<StarterPage>();
+        builder.Services.AddTransient<SudokuGame>();
+        builder.Services.AddTransient<StarterPage>();
 
         //Initialize Crasylytics
         CrashLogger.Initialize();
