@@ -23,7 +23,7 @@ public partial class App : Application
         navBar.BarBackgroundColor = Colors.White;
         navBar.BackgroundColor = Colors.Transparent;
         MainPage = navBar;
-        MainPage.BackgroundColor = Colors.Green;
+        MainPage.BackgroundColor = Colors.Black;
         BaseViewmodel.Instance.setNavigation(navBar.Navigation);
     }
 }

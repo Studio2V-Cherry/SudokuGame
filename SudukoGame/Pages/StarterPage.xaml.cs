@@ -64,7 +64,7 @@ public partial class StarterPage : ContentPage
     /// Plays the suduko game.
     /// </summary>
     /// <param name="sender">The sender.</param>
-    /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+    /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
     private async void playSudukoGame(object sender, EventArgs e)
     {
         try
@@ -82,12 +82,31 @@ public partial class StarterPage : ContentPage
     /// Resumes the suduko game.
     /// </summary>
     /// <param name="sender">The sender.</param>
-    /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+    /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
     private async void resumeSudukoGame(object sender, EventArgs e)
     {
         try
         {
+            CrashLogger.TrackEvent(Core.Constants.loggerEnum.page);
             await Navigation.PushAsync(new SudokuGame(true));
+        }
+        catch (Exception ex)
+        {
+            CrashLogger.LogException(ex);
+        }
+    }
+
+    /// <summary>
+    /// Levelses the suduko game.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+    private async void levelsSudukoGame(object sender, EventArgs e)
+    {
+        try
+        {
+            CrashLogger.TrackEvent(Core.Constants.loggerEnum.page);
+            await Navigation.PushAsync(new LevelsPage());
         }
         catch (Exception ex)
         {
