@@ -1,0 +1,36 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- master
+- dev
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  - group: CI-pipeline-Variables
+
+
+steps:
+- script: echo Hello, world!
+- script: echo $(DotNetVersion)
+  displayName: 'command line statements'
+
+- task: UseDotNet@2
+  displayName: .NET Version
+  inputs:
+    packageType: 'sdk'
+    version: '$(DotNetVersion)'
+    includePreviewVersions: false
+
+- powershell: dotnet workload install maui-android
+  displayName: Maui workload setup
+  
+
+- task: CmdLine@2
+  displayName: 'Build project'
+  inputs:
+    script: 'dotnet publish $(app-path-project) -f $(app-target-framework-android) -c Release /p:ApplicationId=$(app-id-android) /p:ApplicationDisplayVersion=$(MAJOR).$(MINOR).$(PATCH).$(PRE_RELEASE) /p:ApplicationVersion=$(MAJOR)$(MINOR)$(PATCH)$(PRE_RELEASE)'
