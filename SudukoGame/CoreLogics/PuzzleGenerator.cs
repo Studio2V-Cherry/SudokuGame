@@ -19,6 +19,17 @@ namespace SudokuGame.CoreLogics
         /// The instance
         /// </summary>
         private static PuzzleGenerator _instance;
+
+        /// <summary>
+        /// The solved sudoku board
+        /// </summary>
+        Board SolvedSudokuBoard = new Board();
+
+        /// <summary>
+        /// The sudoku board
+        /// </summary>
+        Board SudokuBoard = new Board();
+
         /// <summary>
         /// Gets the instance.
         /// </summary>
@@ -42,7 +53,7 @@ namespace SudokuGame.CoreLogics
         /// </summary>
         Random random;
         /// <summary>
-        /// Initializes a new instance of the <see cref="PuzzleGenerator"/> class.
+        /// Initializes a new instance of the <see cref="PuzzleGenerator" /> class.
         /// </summary>
         public PuzzleGenerator()
         {
@@ -57,6 +68,62 @@ namespace SudokuGame.CoreLogics
             IsSudokuHistory = await _storageHelper.isDataPresent();
         }
 
+        /// <summary>
+        /// Boards the configure.
+        /// </summary>
+        /// <param name="board">The board.</param>
+        public void BoardConfigure()
+        {
+            try
+            {
+                CrashLogger.TrackEvent(Core.Constants.loggerEnum.method);
+                int solvedSudukoSeed = random.Next(6, 25);
+                int quadsTocut = random.Next(1, 20);
+                int pairsTocut = random.Next(1, 20);
+                int singlesTocut = random.Next(1, 20);
+                var _levelsModel = BaseViewmodel.Instance._levelsModel;
+                //Easy or Default
+                if (_levelsModel == null || ((_levelsModel?.Gamelevels ?? 0) == 0))
+                {
+                    solvedSudukoSeed = 20;
+                    quadsTocut = 3;
+                    pairsTocut = 3;
+                    singlesTocut = 3;
+                }
+                //Moderate
+                else if (_levelsModel.Gamelevels == 1)
+                {
+                    solvedSudukoSeed = 20;
+                    quadsTocut = 5;
+                    pairsTocut = 5;
+                    singlesTocut = 5;
+                }
+                //challenging
+                else if (_levelsModel.Gamelevels == 2)
+                {
+                    solvedSudukoSeed = 20;
+                    quadsTocut = 20;
+                    pairsTocut = 20;
+                    singlesTocut = 20;
+                }
+                //Random Generated
+                else if (_levelsModel.Gamelevels == 3)
+                {
+                    //Nothing to do here  
+                }
+                else
+                {
+                    //[todo] Let me generate suduko myself
+                }
+                SolvedSudokuBoard = Factory.Solution(solvedSudukoSeed);
+                SudokuBoard = Factory.Puzzle(SolvedSudokuBoard, random, QuadsToCut: quadsTocut, pairsTocut, singlesTocut);
+
+            }
+            catch (Exception e)
+            {
+                CrashLogger.LogException(e);
+            }  
+        }
 
         /// <summary>
         /// Saves the puzzle.
@@ -112,8 +179,6 @@ namespace SudokuGame.CoreLogics
         {
             try
             {
-                Board SolvedSudokuBoard = new Board();
-                Board SudokuBoard = new Board();
 
                 if (BaseViewmodel.Instance.IsSudokuHistorySelected)
                 {
@@ -134,9 +199,7 @@ namespace SudokuGame.CoreLogics
                 }
                 else
                 {
-                    SolvedSudokuBoard = Factory.Solution(random.Next(6, 25));
-                    SudokuBoard = Factory.Puzzle(SolvedSudokuBoard, random, QuadsToCut: random.Next(1, 8), random.Next(1, 8), random.Next(1, 8));
-
+                    BoardConfigure();
                     int places = 0;
                     for (int i = 0; i < 9; i++)
                     {
@@ -157,7 +220,7 @@ namespace SudokuGame.CoreLogics
             catch (Exception e)
             {
                 CrashLogger.LogException(e);
-                return new Tuple<Board, Board, List<SudukoBoardModel>>(new Board(),new Board(),new List<SudukoBoardModel>());
+                return new Tuple<Board, Board, List<SudukoBoardModel>>(new Board(), new Board(), new List<SudukoBoardModel>());
             }
         }
     }

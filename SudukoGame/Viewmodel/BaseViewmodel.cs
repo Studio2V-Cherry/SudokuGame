@@ -32,6 +32,11 @@ namespace SudokuGame.Viewmodel
         /// The is sudoku history selected
         /// </summary>
         private bool _isSudokuHistorySelected;
+
+        /// <summary>
+        /// The levels model
+        /// </summary>
+        public LevelsModel _levelsModel;
         #endregion
 
         #region public
@@ -112,7 +117,7 @@ namespace SudokuGame.Viewmodel
         /// <value>
         /// The navigation command.
         /// </value>
-        public Command NavigationCommand => new Command<Page>(PushPage);
+        public Command NavigationCommand => new Command<Page>(async(x)=>await PushPage(x));
 
         /// <summary>
         /// Gets or sets the navigation.
@@ -145,7 +150,7 @@ namespace SudokuGame.Viewmodel
         /// Pushes the page.
         /// </summary>
         /// <param name="page">The page.</param>
-        public async void PushPage(Page page)
+        public async Task PushPage(Page page)
         {
             await navigation.PushAsync(page, true);
         }

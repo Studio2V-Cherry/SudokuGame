@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SudokuGame.Pages.LevelsPage">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Style TargetType="Button">
+                <Setter Property="Margin"
+                        Value="0,10" />
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <VerticalStackLayout x:Name="parentStack"
+                         VerticalOptions="CenterAndExpand"
+                         HorizontalOptions="CenterAndExpand"
+                         BindableLayout.ItemsSource="{Binding LevelsModels}">
+        <BindableLayout.ItemTemplate>
+            <DataTemplate>
+                <Button Text="{Binding LevelDescription}"
+                        Command="{Binding Source={x:Reference parentStack},Path=BindingContext.LevelSelectCommand}"
+                        CommandParameter="{Binding .}" />
+            </DataTemplate>
+        </BindableLayout.ItemTemplate>
+        <!--<Button Text="Easy" />
+        <Button Text="Moderate" />
+        <Button Text="Challenging" />
+        <Button Text="Random" />
+        <Button Text="Lem`me Generate it" />-->
+    </VerticalStackLayout>
+</ContentPage>

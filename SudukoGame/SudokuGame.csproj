@@ -75,7 +75,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="akgul.Maui.DataGrid" Version="3.0.0" />
 	  <PackageReference Include="Microsoft.AppCenter.Analytics" Version="5.0.3" />
 	  <PackageReference Include="Microsoft.AppCenter.Crashes" Version="5.0.3" />
 	  <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
@@ -91,6 +90,12 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\Core\Core.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <MauiXaml Update="Pages\LevelsPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	</ItemGroup>
 
 </Project>

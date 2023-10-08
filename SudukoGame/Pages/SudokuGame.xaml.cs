@@ -89,6 +89,7 @@ public partial class SudokuGame : ContentPage
             await _sudukoGeneratorViewmodel.savesuduko();
             parentGrid
                 .Children.Clear();
+            BindingContext=null;
         }
         catch (Exception e)
         {

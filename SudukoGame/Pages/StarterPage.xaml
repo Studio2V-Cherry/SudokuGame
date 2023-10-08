@@ -4,15 +4,19 @@
              xmlns:local="clr-namespace:SudokuGame.Viewmodel"
              x:DataType="local:BaseViewmodel"
              x:Class="SudokuGame.Pages.StarterPage">
-    <VerticalStackLayout VerticalOptions="CenterAndExpand">
+    <VerticalStackLayout VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
         <Button Margin="0,10"
                 x:Name="historyOption"
-                HorizontalOptions="Center"
+                HorizontalOptions="FillAndExpand"
                 Text="Resume"
                 Clicked="resumeSudukoGame" />
         <Button Margin="0,10"
-                HorizontalOptions="Center"
+                HorizontalOptions="FillAndExpand"
                 Text="Play Suduko"
                 Clicked="playSudukoGame" />
+        <Button Margin="0,10"
+                HorizontalOptions="FillAndExpand"
+                Text="Levels"
+                Clicked="levelsSudukoGame" />
     </VerticalStackLayout>
 </ContentPage>
