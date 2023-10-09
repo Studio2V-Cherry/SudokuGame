@@ -161,7 +161,6 @@ steps:
     SourceFolder: '$(system.defaultworkingdirectory)'
     Contents: '**/bin/**'
     TargetFolder: '$(build.artifactstagingdirectory)'
-    CleanTargetFolder: true
 
 # Publish artifacts
 - task: PublishBuildArtifacts@1
