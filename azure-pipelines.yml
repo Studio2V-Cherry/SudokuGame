@@ -149,9 +149,9 @@ steps:
   inputs:
     apkFiles: '**/*.apk'
     apksignerKeystoreFile: 'sudokucherry.keystore'
-    apksignerKeystorePassword: 'sudokucherry123'
+    apksignerKeystorePassword: '$(android-keystore-password)'
     apksignerKeystoreAlias: 'sudokucherry'
-    apksignerKeyPassword: 'sudokucherry123'
+    apksignerKeyPassword: '$(android-keystore-password)'
     zipalign: false
 
 # - script: echo file paths
