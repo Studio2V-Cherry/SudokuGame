@@ -28,8 +28,7 @@ steps:
 
 - powershell: dotnet workload install maui-android
   displayName: Maui workload setup
-  
-
+    
 - task: CmdLine@2
   displayName: 'Build project'
   inputs:

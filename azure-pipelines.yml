@@ -123,13 +123,27 @@ steps:
 
 - powershell: dotnet workload install maui-android
   displayName: Maui workload setup
-  
 
+- task: android-manifest-package-name@1
+  displayName: 'update android package'
+  inputs:
+    sourcePath: 'SudukoGame/Platforms/Android/AndroidManifest.xml'
+    packageName: '$(androidPackageName)'
+    printFile: true
+  
+- task: android-manifest-version@1
+  displayName: 'update android version'
+  inputs:
+    sourcePath: 'SudukoGame/Platforms/Android/AndroidManifest.xml'
+    versionCodeOption: 'buildid'
+    versionCode: '$(androidVersion)'
+    versionName: '$(MAJOR).$(MINOR).$(PATCH).$(PRE_RELEASE)'
+    printFile: true
+    
 - task: CmdLine@2
   displayName: 'Build project'
   inputs:
     script: 'dotnet publish $(app-path-project) -f $(app-target-framework-android) -c Release /p:ApplicationId=$(app-id-android) /p:ApplicationDisplayVersion=$(MAJOR).$(MINOR).$(PATCH).$(PRE_RELEASE) /p:ApplicationVersion=$(MAJOR)$(MINOR)$(PATCH)$(PRE_RELEASE)'
-
 
 - task: AndroidSigning@3
   inputs:
