@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "wide-exchanger-315205",
+  "private_key_id": "87639833cc460160f6c213f21ec979984b2affc6",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDHeO3dBjIDdTqG\nVyvIUwKPwxRvsv6+coT/aAx6elqFSATzJD2YblGRJwaClHBSB+fpnO0+nf7vmqB6\nWSoThnRFVeHoyP19vrNuRAPNMXxzljcMuFsQmQEtfdsFoWv3jisMub2qjUm7BMYG\n2QqLTyI2TuGFZpAno918ac1i4ksYf2m2vldsdpK/4mngxsIkmlhmGV4YXgXDtIOs\nQSV4XmrjefBXvfjaTdgiidNdB/O0gMh9CHrzAIwEh4pPko6JjtPt6NkB1XCXmNEZ\nm9l6VHpGW9li/w0yKTSmREKdOho3d7rxlM/TwJXyN6ZpEKxd5gn6DR4pDrQLbkRs\nNheWgv23AgMBAAECggEAIqpwACjq+THe1WkB2WMfv1dCTnU3k2Z4maB+Bq0L3Tza\na10BfWOytjyng3sDmCX6ll1o16iCnSZsvEaRquoDe+dEhv2jHD7PlRqp5He0rqvM\n7l99qAFHNJ46OZzHlDK3ZZNEFIdQaHmYZqlCjVpX0kNcKyBbbiAqxkvm30f/kAaJ\n994e6mLkSgRYbUzH6SZYSesnwfiK4ybjc6QEzRdI6u1DKYeEWAxsNtuafOy2YNza\n8CKsGuD4HvCXVtrrSZKGektGu3CHoKzglGHGfUyW4sU+FHwPPaWkO5hs8bS5QQWV\nu5qcjHBGALEzu5TGehMFQjP1McY1bnmMUwcwCCmS2QKBgQDtRS0ACVjyhR2WqnSo\njGTHFwPmd7BOiLBUgOc8NM6HxvLdVUBDuCyVyY87sgnCLDxwoRgly2UvtexaftdV\n6M4Chl4qLtoN84XPzH56g6NFqYfpw6SD5rqPWjgiJD/NC+0IqM3AyPLr00ovWZAm\nw97HCJbnXu7JUYHwrdu9Ad5jOQKBgQDXN+yDJkC1U32HnoqI20NeqaTxuvJ/gY3A\nXnyYIZvd+2Go2FTqON7Ybi27EX58B7SV9n4iNbWdEJw8pp17K7tSPuudG4gFeyTP\n766Hf7tTweaJ+iJt1aUcGrUHN4V6nNzGsGNZGi55PuV0KnlcmJcEEgl+71wYEbT4\nnuhWtO24bwKBgGXyZh5w5b32gjsdbFiLUjXU5sEcxi1IP/NfG3vb+K2QRwPgwGcY\neFe3rgppOhYrKaD/Jr/+f7CbSz2q6F0qVXHyR/15+gkqjGE3rVR4wSuKZzKC9GoU\nNi6oBhxtVNiGekdROG7QKMg5FdP4eJ6fZFZCk4xAVvs7QUinexXf+qzJAoGBAJks\n4FRngV6M0acYm5jUFZrmOtMhLz64wl7L4PmV0g2nwNYfQjCB0XlQ0ZN23AMCqPCi\nwxsuBtiG3ev82dC0S1o6Fg93bNQZ1RV5jUo7CuSN+LrzIFXz3NOn3ngIeCPQSQHQ\nwKTGEZWRwlVvdXkF0VXAUKnbSjyHPbpFvy8XDqpZAoGBAKeEhjgWge0U8e1YpURR\nEgYLe6KuZfXrTbHZi0l2hh5s1JCNDhM6OnRhjth6QreHWAkX3o+dwUGXYL3RaY1F\n6TNzLovpRXxho0u45F7zOV2WtZfrRObLmd7pft0YwSQkkuVP4YRtQ+tG1vYWl0un\n0ZksRxkEILKVK3LtUx0VhiKp\n-----END PRIVATE KEY-----\n",
+  "client_email": "charan-play-azure-upload@wide-exchanger-315205.iam.gserviceaccount.com",
+  "client_id": "115913657602445073404",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/charan-play-azure-upload%40wide-exchanger-315205.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
