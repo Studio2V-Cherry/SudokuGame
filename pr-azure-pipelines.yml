@@ -32,7 +32,7 @@ steps:
 - task: android-manifest-package-name@1
   displayName: 'update android package'
   inputs:
-    sourcePath: 'SudokuGame/SudukoGame/Platforms/Android/AndroidManifest.xml'
+    sourcePath: 'SudukoGame/Platforms/Android/AndroidManifest.xml'
     packageName: '$(androidPackageName)'
     printFile: true
   
