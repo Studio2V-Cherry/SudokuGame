@@ -39,9 +39,9 @@ steps:
 - task: android-manifest-version@1
   displayName: 'update android version'
   inputs:
-    sourcePath: 
+    sourcePath: 'SudukoGame/Platforms/Android/AndroidManifest.xml'
     versionCodeOption: 'buildid'
-    versionCode: '$(MAJOR).$(MINOR).$(PATCH).$(PRE_RELEASE)'
+    versionCode: '$(MINOR)'
     versionName: '$(MAJOR).$(MINOR).$(PATCH).$(PRE_RELEASE)'
     printFile: true
     
