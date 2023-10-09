@@ -41,7 +41,7 @@ steps:
   inputs:
     sourcePath: 'SudukoGame/Platforms/Android/AndroidManifest.xml'
     versionCodeOption: 'buildid'
-    versionCode: '$(MINOR)'
+    versionCode: '$(androidVersion)'
     versionName: '$(MAJOR).$(MINOR).$(PATCH).$(PRE_RELEASE)'
     printFile: true
     
