@@ -10,18 +10,13 @@ namespace SudokuGame.Viewmodel
     /// base viewmodel for common properties and functionalities
     /// </summary>
     /// <seealso cref="System.ComponentModel.INotifyPropertyChanged" />
-    public class BaseViewmodel : INotifyPropertyChanged
+    public abstract class BaseViewmodel : INotifyPropertyChanged
     {
         #region fields
         /// <summary>
         /// The game start model
         /// </summary>
         private ObservableCollection<GameStartModel> _gameStartModel;
-
-        /// <summary>
-        /// The instance
-        /// </summary>
-        private static BaseViewmodel _instance;
 
         /// <summary>
         /// The is sudoku history
@@ -34,9 +29,19 @@ namespace SudokuGame.Viewmodel
         private bool _isSudokuHistorySelected;
 
         /// <summary>
+        /// The is game started
+        /// </summary>
+        public bool _isGameStarted;
+
+        /// <summary>
         /// The levels model
         /// </summary>
         public LevelsModel _levelsModel;
+
+        /// <summary>
+        /// The is cold start game
+        /// </summary>
+        private bool _isColdStartGame;
         #endregion
 
         #region public
@@ -44,21 +49,6 @@ namespace SudokuGame.Viewmodel
         /// Occurs when a property value changes.
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
-
-        /// <summary>
-        /// Gets the instance.
-        /// </summary>
-        /// <value>
-        /// The instance.
-        /// </value>
-        public static BaseViewmodel Instance
-        {
-            get
-            {
-                _instance = _instance ?? new BaseViewmodel();
-                return _instance;
-            }
-        }
 
         /// <summary>
         /// Gets or sets a value indicating whether this instance is sudoku history.
@@ -94,6 +84,22 @@ namespace SudokuGame.Viewmodel
         }
 
         /// <summary>
+        /// Gets or sets a value indicating whether this instance is cold start.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance is cold start; otherwise, <c>false</c>.
+        /// </value>
+        public bool IsColdStart
+        {
+            get => _isColdStartGame;
+            set
+            {
+                _isColdStartGame = value;
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
         /// Gets or sets the game start models.
         /// </summary>
         /// <value>
@@ -125,13 +131,13 @@ namespace SudokuGame.Viewmodel
         /// <value>
         /// The navigation.
         /// </value>
-        private INavigation navigation { get; set; } 
+        private INavigation navigation { get; set; }
         #endregion
 
         /// <summary>
         /// Prevents a default instance of the <see cref="BaseViewmodel" /> class from being created.
         /// </summary>
-        public BaseViewmodel()
+        protected BaseViewmodel()
         {
 
         }

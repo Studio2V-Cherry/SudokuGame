@@ -84,8 +84,9 @@ namespace SudokuGame.Viewmodel
             try
             {
                 CrashLogger.TrackEvent(Core.Constants.loggerEnum.page);
-                BaseViewmodel.Instance._levelsModel = model;
-                await BaseViewmodel.Instance.PushPage(new SudokuGame());
+                PuzzleGenerator.Instance._levelsModel = model;
+                await SudukoGeneratorViewmodel.instance.PopulateSuduko();
+                await PuzzleGenerator.Instance.PushPage(new SudokuGame());
             }
             catch (Exception e)
             {

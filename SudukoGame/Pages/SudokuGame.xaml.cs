@@ -1,6 +1,7 @@
 ﻿using Android.Util;
 using Core.CrashlyticsHelpers;
 using Core.TimerHelpers;
+using SudokuGame.CoreLogics;
 using SudokuGame.Viewmodel;
 
 namespace SudokuGame;
@@ -15,19 +16,15 @@ public partial class SudokuGame : ContentPage
     /// The suduko generator viewmodel
     /// </summary>
     SudukoGeneratorViewmodel _sudukoGeneratorViewmodel = SudukoGeneratorViewmodel.instance;
+
     /// <summary>
-    /// Initializes a new instance of the <see cref="MainPage" /> class.
+    /// Initializes a new instance of the <see cref="SudokuGame"/> class.
     /// </summary>
-    /// <param name="isResume">if set to <c>true</c> [is resume].</param>
-    public SudokuGame(bool isResume = false)
+    public SudokuGame()
     {
         try
         {
             CrashLogger.TrackEvent(Core.Constants.loggerEnum.page);
-            _sudukoGeneratorViewmodel.configurePage();
-            BaseViewmodel.Instance.IsSudokuHistorySelected = isResume;
-            _sudukoGeneratorViewmodel.IsInGeneration = true;
-
             InitializeComponent();
             this.BindingContext = _sudukoGeneratorViewmodel;
         }
@@ -40,14 +37,13 @@ public partial class SudokuGame : ContentPage
     /// <summary>
     /// Called when [appearing].
     /// </summary>
-    protected override async void OnAppearing()
+    protected override void OnAppearing()
     {
         base.OnAppearing();
         try
         {
             CrashLogger.TrackEvent(Core.Constants.loggerEnum.page);
-            await _sudukoGeneratorViewmodel.FirstTimeSuduko();
-            if (BaseViewmodel.Instance.IsSudokuHistorySelected)
+            if (PuzzleGenerator.Instance.IsSudokuHistorySelected)
             {
                 TimerHelpers.resumeTimer();
             }
@@ -55,7 +51,7 @@ public partial class SudokuGame : ContentPage
             {
                 TimerHelpers.startTimer();
             }
-            BaseViewmodel.Instance.IsSudokuHistorySelected = false;
+            PuzzleGenerator.Instance.IsSudokuHistorySelected = false;
         }
         catch (Exception e)
         {
@@ -83,16 +79,16 @@ public partial class SudokuGame : ContentPage
     /// <summary>
     /// Called when [disappearing].
     /// </summary>
-    protected override async void OnDisappearing()
+    protected override void OnDisappearing()
     {
         base.OnDisappearing();
         try
         {
-            await _sudukoGeneratorViewmodel.savesuduko();
+            _sudukoGeneratorViewmodel.savesuduko();
             parentGrid
                 .Children.Clear();
             BindingContext=null;
-            //[clear page memory]
+            //[TODO] [clear page memory]
         }
         catch (Exception e)
         {

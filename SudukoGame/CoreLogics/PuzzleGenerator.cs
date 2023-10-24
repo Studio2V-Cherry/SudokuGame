@@ -77,11 +77,10 @@ namespace SudokuGame.CoreLogics
             try
             {
                 CrashLogger.TrackEvent(Core.Constants.loggerEnum.method);
-                int solvedSudukoSeed = random.Next(6, 25);
+                int solvedSudukoSeed = random.Next(6, 30);
                 int quadsTocut = random.Next(1, 20);
-                int pairsTocut = random.Next(1, 20);
-                int singlesTocut = random.Next(1, 20);
-                var _levelsModel = BaseViewmodel.Instance._levelsModel;
+                int pairsTocut = random.Next(4, 20);
+                int singlesTocut = random.Next(8, 20);
                 //Easy or Default
                 if (_levelsModel == null || ((_levelsModel?.Gamelevels ?? 0) == 0))
                 {
@@ -101,7 +100,7 @@ namespace SudokuGame.CoreLogics
                 //challenging
                 else if (_levelsModel.Gamelevels == 2)
                 {
-                    solvedSudukoSeed = 20;
+                    solvedSudukoSeed =random.Next(20, 100);
                     quadsTocut = 20;
                     pairsTocut = 20;
                     singlesTocut = 20;
@@ -117,6 +116,10 @@ namespace SudokuGame.CoreLogics
                 }
                 SolvedSudokuBoard = Factory.Solution(solvedSudukoSeed);
                 SudokuBoard = Factory.Puzzle(SolvedSudokuBoard, random, QuadsToCut: quadsTocut, pairsTocut, singlesTocut);
+                if (!SolvedSudokuBoard.ExistsUniqueSolution())
+                {
+                    BoardConfigure();
+                }
 
             }
             catch (Exception e)
@@ -180,9 +183,19 @@ namespace SudokuGame.CoreLogics
             try
             {
 
-                if (BaseViewmodel.Instance.IsSudokuHistorySelected)
+                if (IsSudokuHistorySelected)
                 {
+                    return new Tuple<Board, Board, List<SudukoBoardModel>>(SolvedSudokuBoard, SudokuBoard, FastSudukoBoardModel);                    
+                }
+                else if(IsColdStart)
+                {
+
+                    IsColdStart = false;
                     var storageHelper = await _storageHelper.GetSavedInstanceAsync();
+                    if (!storageHelper?.Any()??true) 
+                    {
+                        return await GeneratePuzzleAsync(FastSudukoBoardModel);
+                    }
                     var SolvedSudokuBoardList = JsonSerializer.Deserialize<List<int>>(storageHelper.FirstOrDefault().SolvedBoard);
                     var SudokuBoardList = JsonSerializer.Deserialize<List<int>>(storageHelper.FirstOrDefault().GeneratedBoard);
                     for (int i = 0; i < 81; i++)
@@ -194,7 +207,6 @@ namespace SudokuGame.CoreLogics
                     var FastSudukoBoardModelInstance = JsonSerializer.Deserialize<List<SudukoBoardModel>>(storageHelper.FirstOrDefault().CurrentBoardInstance);
 
                     TimerHelpers.setTimer(storageHelper.FirstOrDefault().elapsed);
-
                     return new Tuple<Board, Board, List<SudukoBoardModel>>(SolvedSudokuBoard, SudokuBoard, FastSudukoBoardModelInstance);
                 }
                 else

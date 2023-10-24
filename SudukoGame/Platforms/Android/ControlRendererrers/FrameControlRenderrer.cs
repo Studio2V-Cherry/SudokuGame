@@ -15,13 +15,66 @@ namespace SudokuGame.Platforms.Android.ControlRendererrers
     public class FrameControlRenderrer : FrameRenderer
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="FrameControlRenderrer"/> class.
+        /// Initializes a new instance of the <see cref="FrameControlRenderrer" /> class.
         /// </summary>
         /// <param name="context">The context.</param>
         public FrameControlRenderrer(Context context) : base(context)
         {
+            //this.ElementChanged -= frameBackgroundElementChange;
+            //this.ElementPropertyChanged -= frameBackgroundPropertyChange;
 
+            //this.ElementChanged += frameBackgroundElementChange;
+            //this.ElementPropertyChanged += frameBackgroundPropertyChange;
         }
+
+        ///// <summary>
+        ///// Frames the background property change.
+        ///// </summary>
+        ///// <param name="sender">The sender.</param>
+        ///// <param name="e">The <see cref="PropertyChangedEventArgs"/> instance containing the event data.</param>
+        //private void frameBackgroundPropertyChange(object sender, PropertyChangedEventArgs e)
+        //{
+        //    try
+        //    {
+        //        if (Control != null)
+        //        {
+        //            if (e.PropertyName == nameof(FrameControl.cellRegion) ||
+        //                e.PropertyName == nameof(FrameControl.SelectedBackground))
+        //            {
+        //                _ = e.PropertyName;
+        //                frameBackgroundChange(sender as FrameControl);
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        CrashLogger.LogException(ex);
+        //    }
+        //}
+
+        ///// <summary>
+        ///// Frames the background element change.
+        ///// </summary>
+        ///// <param name="sender">The sender.</param>
+        ///// <param name="e">The <see cref="VisualElementChangedEventArgs"/> instance containing the event data.</param>
+        //private void frameBackgroundElementChange(object sender, VisualElementChangedEventArgs e)
+        //{
+        //    try
+        //    {
+        //        if (Control != null)
+        //        {
+        //            var frame = e.NewElement as FrameControl;
+        //            if (frame != null)
+        //            {
+        //                frameBackgroundChange(frame);
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        CrashLogger.LogException(ex);
+        //    }
+        //}
 
         /// <summary>
         /// Raises the <see cref="E:ElementChanged" /> event.
@@ -50,7 +103,7 @@ namespace SudokuGame.Platforms.Android.ControlRendererrers
             base.OnElementPropertyChanged(sender, e);
             if (Control != null)
             {
-                if (e.PropertyName == nameof(FrameControl.cellRegion) || 
+                if (e.PropertyName == nameof(FrameControl.cellRegion) ||
                     e.PropertyName == nameof(FrameControl.SelectedBackground))
                 {
                     _ = e.PropertyName;
@@ -62,7 +115,7 @@ namespace SudokuGame.Platforms.Android.ControlRendererrers
         /// <summary>
         /// Frames the background change.
         /// </summary>
-        /// <param name="frame">The frame.</param>
+        /// <param name = "frame" > The frame.</param>
         private void frameBackgroundChange(FrameControl frame)
         {
             try

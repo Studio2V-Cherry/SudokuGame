@@ -55,7 +55,7 @@ namespace SudokuGame.Platforms.Android.ControlRendererrers
                 }
                 //{
                 //    _ = e.PropertyName;
-                //    //frameBackgroundChange(label);
+                //    //frameBackgroundElementChange(label);
                 //}
             }
         }

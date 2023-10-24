@@ -16,7 +16,7 @@
         /// The selected background property
         /// </summary>
         public static readonly BindableProperty SelectedBackgroundProperty =
-            BindableProperty.Create(nameof(cellRegion), typeof(bool), typeof(bool), null);
+            BindableProperty.Create(nameof(SelectedBackground), typeof(bool), typeof(bool), null);
 
         /// <summary>
         /// Gets or sets the cell region.
