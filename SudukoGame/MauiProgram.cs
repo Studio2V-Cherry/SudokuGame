@@ -38,19 +38,17 @@ public static class MauiProgram
             });
 
         //models
-        builder.Services.AddSingleton<StorageHelper>();
-        //builder.Services.AddSingleton<TodoItemDatabase>();
-        builder.Services.AddSingleton<BaseViewmodel>();
-        builder.Services.AddSingleton<SudukoGeneratorViewmodel>();
-        builder.Services.AddSingleton<SudukoSolverViewmodel>();
-        builder.Services.AddSingleton<PuzzleGenerator>();
-
+        //builder.Services.AddSingleton<StorageHelper>();
+        //builder.Services.AddSingleton<SudukoGeneratorViewmodel>();
+        //builder.Services.AddSingleton<SudukoSolverViewmodel>();
+        //builder.Services.AddSingleton<PuzzleGenerator>();
         //pages
-        builder.Services.AddTransient<SudokuGame>();
-        builder.Services.AddTransient<StarterPage>();
+        //builder.Services.AddTransient<SudokuGame>();
+        //builder.Services.AddTransient<StarterPage>();
 
         //Initialize Crasylytics
         CrashLogger.Initialize();
+
 
         return builder.Build();
     }

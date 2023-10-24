@@ -545,7 +545,7 @@ namespace SudokuGame.Viewmodel
             {
                 CrashLogger.TrackEvent(Core.Constants.loggerEnum.method);
                 await PopulateSuduko();
-                if (Instance.IsSudokuHistorySelected)
+                if (PuzzleGenerator.Instance.IsSudokuHistorySelected)
                 {
                     TimerHelpers.resumeTimer();
                 }
@@ -553,7 +553,7 @@ namespace SudokuGame.Viewmodel
                 {
                     TimerHelpers.startTimer();
                 }
-                Instance.IsSudokuHistorySelected = false;
+                PuzzleGenerator.Instance.IsSudokuHistorySelected = false;
             }
             catch (Exception e)
             {
@@ -700,8 +700,8 @@ namespace SudokuGame.Viewmodel
         public async Task FirstTimeSuduko()
         {
             IsInGeneration = true;
-            await PopulateSuduko();
             PopulateRegions();
+            await PopulateSuduko();
         }
 
         /// <summary>
@@ -719,7 +719,7 @@ namespace SudokuGame.Viewmodel
                 SolvedSudokuBoard = puzzle.Item1;
                 SudokuBoard = new Board(puzzle.Item2);
                 SudukoBoardGenerated = new Board(puzzle.Item2);
-                FastSudukoBoardModel = puzzle.Item3;
+               // FastSudukoBoardModel = puzzle.Item3;
                 SudukoBoardModelsStack = new Stack<Tuple<int, string>>();
                 SudukoUndoOperation();
                 TimerHelpers.UpdateTimer += TimerHelpers_UpdateTimer;
@@ -733,9 +733,12 @@ namespace SudokuGame.Viewmodel
         /// <summary>
         /// Savesudukoes this instance.
         /// </summary>
-        public async Task savesuduko()
+        public void savesuduko()
         {
-            await _puzzleGenerator.savePuzzle(SolvedSudokuBoard, SudukoBoardGenerated, SudukoBoardModel);
+           Task.Run(async()=> 
+           {
+               await _puzzleGenerator.savePuzzle(SolvedSudokuBoard, SudukoBoardGenerated, SudukoBoardModel);
+           });
         }
 
         #endregion

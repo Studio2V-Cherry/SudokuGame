@@ -1,6 +1,7 @@
 using Core.CrashlyticsHelpers;
 using SudokuGame.CoreLogics;
 using SudokuGame.Viewmodel;
+using static Microsoft.Maui.LifecycleEvents.AndroidLifecycle;
 
 namespace SudokuGame.Pages;
 
@@ -10,14 +11,6 @@ namespace SudokuGame.Pages;
 /// <seealso cref="Microsoft.Maui.Controls.ContentPage" />
 public partial class StarterPage : ContentPage
 {
-    /// <summary>
-    /// Gets the base viewmodel.
-    /// </summary>
-    /// <value>
-    /// The base viewmodel.
-    /// </value>
-    BaseViewmodel _baseViewmodel => BaseViewmodel.Instance;
-
     /// <summary>
     /// Gets the sudukogenerator viewmodel.
     /// </summary>
@@ -38,10 +31,8 @@ public partial class StarterPage : ContentPage
     public StarterPage()
     {
         try
-        {
-            _sudukogeneratorViewmodel.configurePage();
+        {            
             InitializeComponent();
-            this.BindingContext = _baseViewmodel;
         }
         catch (Exception e)
         {
@@ -55,7 +46,6 @@ public partial class StarterPage : ContentPage
     protected async override void OnAppearing()
     {
         base.OnAppearing();
-        // _sudukogeneratorViewmodel.FirstTimeSuduko();
         await _puzzleGenerator.getIfSudukoHistoryPresent();
         historyOption.IsVisible = _puzzleGenerator.IsSudokuHistory;
     }
@@ -88,7 +78,10 @@ public partial class StarterPage : ContentPage
         try
         {
             CrashLogger.TrackEvent(Core.Constants.loggerEnum.page);
-            await Navigation.PushAsync(new SudokuGame(true));
+            PuzzleGenerator.Instance.IsSudokuHistorySelected = true;
+            SudukoGeneratorViewmodel.instance.IsInGeneration = true;
+            await SudukoGeneratorViewmodel.instance.FirstTimeSuduko();
+            await Navigation.PushAsync(new SudokuGame());
         }
         catch (Exception ex)
         {

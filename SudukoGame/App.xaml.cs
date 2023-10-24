@@ -1,4 +1,6 @@
-﻿using SudokuGame.Pages;
+﻿using Core.CrashlyticsHelpers;
+using SudokuGame.CoreLogics;
+using SudokuGame.Pages;
 using SudokuGame.Viewmodel;
 
 namespace SudokuGame;
@@ -18,12 +20,30 @@ public partial class App : Application
     public App()
     {
         InitializeComponent();
+        coldStart().Wait();
         Current.UserAppTheme = AppTheme.Light;
-        var navBar = new NavigationPage(new StarterPage());
-        navBar.BarBackgroundColor = Colors.White;
-        navBar.BackgroundColor = Colors.Transparent;
-        MainPage = navBar;
+        MainPage = new NavigationPage(new StarterPage())
+        {
+            BarBackground = Colors.White,
+            BackgroundColor = Colors.Transparent
+        };
         MainPage.BackgroundColor = Colors.Black;
-        BaseViewmodel.Instance.setNavigation(navBar.Navigation);
+        PuzzleGenerator.Instance.setNavigation(MainPage.Navigation);
+    }
+
+    /// <summary>
+    /// Colds the start.
+    /// </summary>
+    private async Task coldStart()
+    {
+        try
+        {
+            SudukoGeneratorViewmodel.instance.configurePage();
+            await SudukoGeneratorViewmodel.instance.FirstTimeSuduko();
+        }
+        catch (Exception e)
+        {
+            CrashLogger.LogException(e);
+        }
     }
 }
